@@ -44,6 +44,9 @@
 - 🌊 **Real-time Waveform Rendering:** Smooth, precise, and hardware-accelerated audio waveform visualization.
 - 🎛️ **Advanced Audio Routing:** Granular control over audio channels with seamless output device routing and selection.
 - 🔠 **Premium Typography:** Integrates custom, high-quality fonts to elevate the visual aesthetics.
+- 🎙️ **Perfect for Streamers:** An ultimate soundboard for content creators to play sound effects (like laughs, applause, etc.) seamlessly during live streams.
+- ✂️ **Built-in Downloader & Trimmer:** Easily download media, trim, and edit audio clips right within the app before adding them to your soundboard.
+- ⌨️ **Stream Deck & Hotkey Integration:** Fully customize keyboard shortcuts or integrate directly with devices like Elgato Stream Deck for instant audio triggers.
 
 ### 📸 Application Gallery
 
@@ -96,6 +99,9 @@ npm run tauri dev
 - 🌊 **تصيير الموجات الصوتية (Waveform):** عرض حي ودقيق لموجات الصوت مع تأثيرات بصرية مدعومة بتسريع الأجهزة (Hardware Acceleration).
 - 🎛️ **توجيه وتحكم صوتي متقدم:** إمكانية فصل قنوات الصوت والتحكم الدقيق في مخارج الصوت (Output Devices) بمرونة تامة.
 - 🔠 **هوية بصرية مميزة:** استخدام خطوط مدفوعة ومخصصة تم دمجها برمجياً لرفع مستوى الجمالية في واجهات الاستخدام.
+- 🎙️ **المساعد الأول لصناع المحتوى:** لوحة مؤثرات صوتية (Soundboard) متكاملة تتيح للبثاثين (Streamers) تشغيل ضحكات وتأثيرات حية أثناء البث المباشر بكل سهولة.
+- ✂️ **تحميل، قص، وتعديل:** أداة مدمجة لتحميل المقاطع، قصها، وتعديلها بدقة قبل إضافتها إلى قائمة المؤثرات الخاصة بك.
+- ⌨️ **التكامل مع Stream Deck:** دعم كامل لتخصيص اختصارات لوحة المفاتيح (Hotkeys)، مع إمكانية ربط الأزرار مباشرة بأجهزة التحكم مثل (Elgato Stream Deck).
 
 ### 📸 معرض الصور
 
