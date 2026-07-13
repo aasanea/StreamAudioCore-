@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { AudioLines } from "lucide-react";
 import { useAppVersion } from "../hooks/useAppVersion";
+import { useLanguage } from "../i18n";
 
 interface TitleBarProps {
   activeTab: string;
@@ -12,6 +13,7 @@ export const TitleBar = ({ activeTab }: TitleBarProps) => {
   const win = getCurrentWindow();
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const appVersion = useAppVersion();
+  const { t } = useLanguage();
 
   useEffect(() => {
     win.isMaximized().then(setIsMaximized);
@@ -61,7 +63,7 @@ export const TitleBar = ({ activeTab }: TitleBarProps) => {
           <button
             onClick={handleClose}
             className="text-brand-300 hover:text-red-400 hover:scale-115 active:scale-95 transition-all duration-200 cursor-pointer flex items-center justify-center"
-            title="إغلاق"
+            title={t('tb_close')}
           >
             <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M1.5 1.5L8.5 8.5M8.5 1.5L1.5 8.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
@@ -72,7 +74,7 @@ export const TitleBar = ({ activeTab }: TitleBarProps) => {
           <button
             onClick={handleMinimize}
             className="text-brand-300 hover:text-green-400 hover:scale-115 active:scale-95 transition-all duration-200 cursor-pointer flex items-center justify-center"
-            title="تصغير"
+            title={t('tb_minimize')}
           >
             <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M1 5H9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
@@ -83,7 +85,7 @@ export const TitleBar = ({ activeTab }: TitleBarProps) => {
           <button
             onClick={handleMaximize}
             className="text-brand-300 hover:text-indigo-400 hover:scale-115 active:scale-95 transition-all duration-200 cursor-pointer flex items-center justify-center"
-            title={isMaximized ? "استعادة" : "تكبير"}
+            title={isMaximized ? t('tb_restore') : t('tb_maximize')}
           >
             {isMaximized ? (
               <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -132,7 +134,7 @@ export const TitleBar = ({ activeTab }: TitleBarProps) => {
           className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
             isOnline ? "bg-[#22C55E] shadow-[0_0_8px_#22C55E]" : "bg-red-500 shadow-[0_0_8px_#ef4444]"
           }`}
-          title={isOnline ? "متصل بالسحابة" : "يعمل أوفلاين (غير متصل)"}
+          title={isOnline ? t('tb_online') : t('tb_offline')}
         />
         <span
           className="text-[9px] font-mono px-2 py-0.5 rounded-md font-bold"

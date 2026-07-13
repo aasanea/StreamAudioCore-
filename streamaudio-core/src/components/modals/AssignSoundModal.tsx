@@ -1,6 +1,7 @@
 import React from 'react';
 import { Folder } from 'lucide-react';
 import { SoundEntry } from '../../types';
+import { useLanguage } from '../../i18n';
 
 export interface AssignState {
   assigningPadIndex: number | null;
@@ -22,6 +23,7 @@ export const AssignSoundModal: React.FC<AssignSoundModalProps> = ({
   assignState,
   assignActions
 }) => {
+  const { t } = useLanguage();
   const { assigningPadIndex, sounds } = assignState;
   const { handleBrowseFileForPad, handleAssignLibrarySound, setAssigningPadIndex } = assignActions;
 
@@ -31,7 +33,7 @@ export const AssignSoundModal: React.FC<AssignSoundModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div className="glass-card w-full max-w-lg rounded-2xl p-6 border border-border-main flex flex-col gap-5 shadow-2xl bg-surface">
         <h3 className="text-right text-base font-bold text-text-main border-b border-border-main pb-3" dir="rtl">
-          تعيين مؤثر صوتي للخلية #{assigningPadIndex + 1}
+          {t('assign_title', { pad: assigningPadIndex + 1 })}
         </h3>
 
         {/* Direct file pick button */}
@@ -41,11 +43,11 @@ export const AssignSoundModal: React.FC<AssignSoundModalProps> = ({
           dir="rtl"
         >
           <Folder size={18} />
-          اختيار ملف صوتي من جهازك مباشرة...
+          {t('assign_browse_local')}
         </button>
 
         <div className="text-right text-xs text-zinc-400 font-semibold mt-2" dir="rtl">
-          أو اختر من المؤثرات المضافة مسبقاً في المكتبة الصوتية:
+          {t('assign_or_lib')}
         </div>
 
         {/* Library list scrollable */}
@@ -63,7 +65,7 @@ export const AssignSoundModal: React.FC<AssignSoundModalProps> = ({
           ))}
           {sounds.length === 0 && (
             <div className="text-center py-6 text-zinc-550 text-xs" dir="rtl">
-              المكتبة الصوتية فارغة حالياً. أضف ملفاً من جهازك مباشرة بالضغط على الزر أعلاه.
+              {t('assign_lib_empty')}
             </div>
           )}
         </div>
@@ -74,7 +76,7 @@ export const AssignSoundModal: React.FC<AssignSoundModalProps> = ({
             onClick={() => setAssigningPadIndex(null)}
             className="px-5 py-2.5 rounded-lg bg-primary border border-border-main text-zinc-400 hover:text-text-main hover:bg-zinc-800 text-xs font-bold transition-colors cursor-pointer"
           >
-            إلغاء
+            {t('assign_cancel')}
           </button>
         </div>
       </div>

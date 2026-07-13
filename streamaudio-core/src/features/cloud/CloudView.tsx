@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
+import { useLanguage } from '../../i18n';
 import { Config, CommunityPack, SyncReport } from '../../types';
 import { GlassPanel } from '../../components/ui/GlassPanel';
 import { Button } from '../../components/ui/Button';
@@ -99,6 +100,7 @@ export interface CloudViewProps {
 
 const UpdaterCard: React.FC = () => {
   const appVersion = useAppVersion();
+  const { t } = useLanguage();
   const [state, setState] = useState<UpdaterStatus>({
     status: 'idle',
     info: null,
@@ -156,19 +158,19 @@ const UpdaterCard: React.FC = () => {
       case 'up_to_date':
         return (
           <span className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg font-bold bg-green-500/20 text-green-400 border border-green-500/30">
-            <CheckCircle2 size={13} /> محدَّث
+            <CheckCircle2 size={13} /> {t('cloud_updated')}
           </span>
         );
       case 'available':
         return (
           <span className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 animate-pulse">
-            <Sparkles size={13} /> تحديث متاح
+            <Sparkles size={13} /> {t('cloud_update_available')}
           </span>
         );
       case 'checking':
         return (
           <span className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg font-bold bg-white/5 text-zinc-400 border border-white/10">
-            <Loader2 size={13} className="animate-spin" /> جاري الفحص...
+            <Loader2 size={13} className="animate-spin" /> {t('cloud_checking')}
           </span>
         );
       case 'downloading':
@@ -176,25 +178,25 @@ const UpdaterCard: React.FC = () => {
         return (
           <span className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg font-bold bg-ocean-500/20 text-ocean-400 border border-ocean-500/30">
             <Loader2 size={13} className="animate-spin" />
-            {state.status === 'downloading' ? `تحميل ${state.downloadProgress}%` : 'جاري التثبيت...'}
+            {state.status === 'downloading' ? t('cloud_downloading_percent', { percent: state.downloadProgress }) : t('cloud_installing')}
           </span>
         );
       case 'restart':
         return (
           <span className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg font-bold bg-green-500/20 text-green-400 border border-green-500/30">
-            <CheckCircle2 size={13} /> اكتمل التحديث!
+            <CheckCircle2 size={13} /> {t('cloud_update_done')}
           </span>
         );
       case 'error':
         return (
           <span className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg font-bold bg-red-500/20 text-red-400 border border-red-500/30">
-            <AlertCircle size={13} /> خطأ
+            <AlertCircle size={13} /> {t('cloud_error')}
           </span>
         );
       default:
         return (
           <span className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg font-bold bg-white/5 text-zinc-400 border border-white/10">
-            <ShieldCheck size={13} /> الإصدار {appVersion}
+            <ShieldCheck size={13} /> {t('cloud_version', { version: appVersion })}
           </span>
         );
     }
@@ -208,13 +210,13 @@ const UpdaterCard: React.FC = () => {
       <div className="flex justify-between items-center border-b border-white/5 pb-4">
         {renderStatusBadge()}
         <Typography variant="h3" color="primary" className="flex items-center gap-2">
-          <ArrowDownToLine size={18} className="text-ocean-400" /> تحديثات التطبيق
+          <ArrowDownToLine size={18} className="text-ocean-400" /> {t('cloud_app_updates')}
         </Typography>
       </div>
 
       {/* Current version */}
       <div className="flex justify-between items-center text-sm" dir="rtl">
-        <span className="text-zinc-400">الإصدار الحالي:</span>
+        <span className="text-zinc-400">{t('cloud_current_version')}</span>
         <span className="font-mono text-ocean-300 font-bold bg-ocean-500/10 px-3 py-1 rounded-lg border border-ocean-500/20">
           {state.info?.current_version || appVersion.replace('v', '')}
         </span>
@@ -223,7 +225,7 @@ const UpdaterCard: React.FC = () => {
       {/* Latest version (when available) */}
       {state.info?.available && state.info.latest_version && (
         <div className="flex justify-between items-center text-sm" dir="rtl">
-          <span className="text-zinc-400">الإصدار الجديد:</span>
+          <span className="text-zinc-400">{t('cloud_new_version')}</span>
           <span className="font-mono text-amber-300 font-bold bg-amber-500/10 px-3 py-1 rounded-lg border border-amber-500/20">
             {state.info.latest_version}
           </span>
@@ -233,7 +235,7 @@ const UpdaterCard: React.FC = () => {
       {/* Release notes */}
       {state.info?.release_notes && (
         <div className="bg-white/5 border border-white/10 rounded-xl p-4 text-sm text-zinc-300 text-right leading-relaxed" dir="rtl">
-          <p className="text-xs text-zinc-500 font-bold mb-2">ملاحظات الإصدار:</p>
+          <p className="text-xs text-zinc-500 font-bold mb-2">{t('cloud_release_notes')}</p>
           <p>{state.info.release_notes}</p>
         </div>
       )}
@@ -248,7 +250,7 @@ const UpdaterCard: React.FC = () => {
             />
           </div>
           <p className="text-xs text-zinc-400 text-right" dir="rtl">
-            جاري تحميل التحديث... {state.downloadProgress}%
+            {t('cloud_downloading', { percent: state.downloadProgress })}
           </p>
         </div>
       )}
@@ -256,7 +258,7 @@ const UpdaterCard: React.FC = () => {
       {/* Error message */}
       {state.status === 'error' && state.error && (
         <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 text-xs text-red-400 text-right" dir="rtl">
-          {state.error.includes('No update') ? 'لم يتم العثور على تحديثات متاحة.' : state.error}
+          {state.error.includes('No update') ? t('cloud_no_updates') : state.error}
         </div>
       )}
 
@@ -270,7 +272,7 @@ const UpdaterCard: React.FC = () => {
             className="flex-1 py-2.5 font-bold"
           >
             <Download size={15} className="ml-2" />
-            تثبيت التحديث
+            {t('cloud_install_update')}
           </Button>
         )}
         <Button
@@ -280,7 +282,7 @@ const UpdaterCard: React.FC = () => {
           className={state.status === 'available' ? 'py-2.5' : 'flex-1 py-2.5'}
         >
           <RefreshCw size={14} className={`ml-2 ${isProcessing ? 'animate-spin' : ''}`} />
-          {state.status === 'up_to_date' ? 'أنت على أحدث إصدار' : 'فحص التحديثات'}
+          {state.status === 'up_to_date' ? t('cloud_up_to_date') : t('cloud_check_updates')}
         </Button>
       </div>
     </GlassPanel>
@@ -290,6 +292,7 @@ const UpdaterCard: React.FC = () => {
 // ─── SoundPacksSection Component ───────────────────────────────────────────────
 
 const SoundPacksSection: React.FC = () => {
+  const { t } = useLanguage();
   const [packs, setPacks] = useState<SoundPackItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -348,11 +351,11 @@ const SoundPacksSection: React.FC = () => {
   const getPackPct = (packId: string) => packProgress[packId]?.percentage ?? 0;
 
   const categoryColors: Record<string, string> = {
-    'كوميدي': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-    'رعب': 'bg-red-500/20 text-red-400 border-red-500/30',
-    'طبيعة': 'bg-green-500/20 text-green-400 border-green-500/30',
-    'ألعاب': 'bg-purple-500/20 text-purple-400 border-purple-500/30',
-    'بث': 'bg-ocean-500/20 text-ocean-400 border-ocean-500/30',
+    [t('cloud_cat_comedy')]: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+    [t('cloud_cat_horror')]: 'bg-red-500/20 text-red-400 border-red-500/30',
+    [t('cloud_cat_nature')]: 'bg-green-500/20 text-green-400 border-green-500/30',
+    [t('cloud_cat_gaming')]: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
+    [t('cloud_cat_streaming')]: 'bg-ocean-500/20 text-ocean-400 border-ocean-500/30',
   };
 
   return (
@@ -365,15 +368,15 @@ const SoundPacksSection: React.FC = () => {
           className="flex items-center gap-2 text-xs text-zinc-400 hover:text-ocean-400 transition-colors px-3 py-1.5 rounded-lg hover:bg-ocean-500/10 border border-transparent hover:border-ocean-500/20"
         >
           <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
-          تحديث القائمة
+          {t('cloud_refresh_list')}
         </button>
         <Typography variant="h2" color="primary" className="flex items-center justify-end gap-3">
-          حزم الأصوات الاختيارية <Music2 size={22} className="text-ocean-400" />
+          {t('cloud_optional_packs')} <Music2 size={22} className="text-ocean-400" />
         </Typography>
       </div>
 
       <p className="text-sm text-zinc-400 text-right leading-relaxed" dir="rtl">
-        حزم صوتية إضافية متاحة للتحميل الاختياري. كل حزمة تُضاف تلقائياً إلى مكتبتك بعد التثبيت.
+        {t('cloud_optional_desc')}
       </p>
 
       {/* Error state */}
@@ -381,12 +384,12 @@ const SoundPacksSection: React.FC = () => {
         <GlassPanel intensity="low" className="p-6 border-red-500/20 flex flex-col items-center gap-3">
           <AlertCircle size={32} className="text-red-400 opacity-70" />
           <Typography variant="body" color="muted" className="text-center text-sm">
-            تعذّر الاتصال بسيرفر الحزم. تأكد من اتصالك بالشبكة.
+            {t('cloud_connect_error')}
           </Typography>
           <button
             onClick={fetchPacks}
             className="text-xs text-ocean-400 hover:underline"
-          >إعادة المحاولة</button>
+          >{t('cloud_retry')}</button>
         </GlassPanel>
       )}
 
@@ -394,7 +397,7 @@ const SoundPacksSection: React.FC = () => {
       {loading && !error && (
         <div className="py-16 flex flex-col items-center gap-4">
           <Loader2 className="h-8 w-8 animate-spin text-ocean-400" />
-          <Typography variant="body" color="muted">جاري تحميل قائمة الحزم...</Typography>
+          <Typography variant="body" color="muted">{t('cloud_loading_packs')}</Typography>
         </div>
       )}
 
@@ -405,16 +408,16 @@ const SoundPacksSection: React.FC = () => {
             <Package size={28} className="text-ocean-400 opacity-80" />
           </div>
           <Typography variant="h3" color="primary">
-            لا توجد حزم صوتية حالياً
+            {t('cloud_no_packs')}
           </Typography>
           <div dir="rtl">
             <Typography variant="body" color="muted" className="max-w-md text-sm leading-relaxed">
-              حالياً لا تتوفر أي حزم جاهزة للتحميل. قريباً سيتم تحديث الحزم وإضافة أصوات ومؤثرات جديدة ومميزة، ابقَ مترقباً!
+              {t('cloud_no_packs_desc')}
             </Typography>
           </div>
           <Button variant="secondary" onClick={fetchPacks} className="mt-4 py-2">
             <RefreshCw size={14} className="ml-2" />
-            التحقق مجدداً
+            {t('cloud_check_again')}
           </Button>
         </GlassPanel>
       )}
@@ -476,7 +479,7 @@ const SoundPacksSection: React.FC = () => {
                   <div className="flex justify-between items-center text-xs text-zinc-500" dir="rtl">
                     <span className="flex items-center gap-1">
                       <Package size={11} />
-                      الإصدار {pack.version}
+                      {t('cloud_pack_version', { version: pack.version })}
                     </span>
                     <span>{pack.author}</span>
                   </div>
@@ -510,14 +513,14 @@ const SoundPacksSection: React.FC = () => {
                         />
                       </div>
                       <p className="text-[10px] text-zinc-400 text-right" dir="rtl">
-                        {status === 'installing' ? 'جاري التثبيت...' : `${Math.round(pct)}%`}
+                        {status === 'installing' ? t('cloud_pack_installing') : `${Math.round(pct)}%`}
                       </p>
                     </div>
                   )}
 
                   {/* Error message */}
                   {isError && (
-                    <p className="text-[10px] text-red-400 text-right">فشل التحميل. حاول مجدداً.</p>
+                    <p className="text-[10px] text-red-400 text-right">{t('cloud_pack_install_fail')}</p>
                   )}
 
                   {/* Footer: rating + action button */}
@@ -553,13 +556,13 @@ const SoundPacksSection: React.FC = () => {
                       `}
                     >
                       {isDone ? (
-                        <><CheckCircle2 size={12} /> مثبَّت</>
+                        <><CheckCircle2 size={12} /> {t('cloud_pack_installed')}</>
                       ) : isActive ? (
-                        <><Loader2 size={12} className="animate-spin" /> {status === 'installing' ? 'يُثبَّت...' : 'يُحمَّل...'}</>
+                        <><Loader2 size={12} className="animate-spin" /> {status === 'installing' ? t('cloud_pack_installing') : t('cloud_pack_downloading')}</>
                       ) : isError ? (
-                        <><RefreshCw size={12} /> إعادة</>
+                        <><RefreshCw size={12} /> {t('cloud_pack_reinstall')}</>
                       ) : (
-                        <><ArrowDownToLine size={12} /> تثبيت</>
+                        <><ArrowDownToLine size={12} /> {t('cloud_pack_install')}</>
                       )}
                     </button>
                   </div>
@@ -575,9 +578,9 @@ const SoundPacksSection: React.FC = () => {
         <div className="col-span-full py-16 text-center">
           <GlassPanel intensity="low" className="inline-flex flex-col items-center justify-center p-10 border-dashed border-white/10">
             <Music2 size={40} className="text-zinc-600 mb-4 opacity-50" />
-            <Typography variant="h3" color="muted">لا توجد حزم متاحة حالياً</Typography>
+            <Typography variant="h3" color="muted">{t('cloud_no_packs_available')}</Typography>
             <Typography variant="caption" color="muted" className="mt-2">
-              سيتم إضافة حزم صوتية قريباً
+              {t('cloud_packs_soon')}
             </Typography>
           </GlassPanel>
         </div>
@@ -616,15 +619,16 @@ export const CloudView: React.FC<CloudViewProps> = React.memo(({
     publishingPack,
     handlePublishPack
   } = publishState;
+  const { t } = useLanguage();
 
   return (
     <div className="p-8 h-full flex flex-col gap-10 overflow-y-auto custom-scrollbar">
 
       {/* ── Page Title ──────────────────────────────────────────────── */}
       <div className="text-right w-full">
-        <Typography variant="h1" color="primary">السحابة والمجتمع</Typography>
+        <Typography variant="h1" color="primary">{t('cloud_title')}</Typography>
         <Typography variant="caption" color="muted" className="mt-1">
-          مزامنة إعداداتك، التحديثات، وحزم الأصوات الاختيارية
+          {t('cloud_subtitle')}
         </Typography>
       </div>
 
@@ -636,10 +640,10 @@ export const CloudView: React.FC<CloudViewProps> = React.memo(({
           <div className="flex justify-between items-center border-b border-white/5 pb-4">
             <span className={`text-xs px-3 py-1.5 rounded-lg font-bold tracking-wide flex items-center gap-1.5 ${config.cloud_provider ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-white/5 text-zinc-400 border border-white/10'}`}>
               {config.cloud_provider ? <Wifi size={13} /> : <WifiOff size={13} />}
-              {config.cloud_provider ? "متصل" : "غير متصل"}
+              {config.cloud_provider ? t('cloud_connected') : t('cloud_disconnected')}
             </span>
             <Typography variant="h3" color="primary" className="flex items-center gap-2">
-              <RefreshCw size={18} className="text-ocean-400" /> حالة المزامنة
+              <RefreshCw size={18} className="text-ocean-400" /> {t('cloud_sync_status')}
             </Typography>
           </div>
 
@@ -647,46 +651,46 @@ export const CloudView: React.FC<CloudViewProps> = React.memo(({
             {config.cloud_provider ? (
               <>
                 <div className="flex justify-between items-center text-sm" dir="rtl">
-                  <span className="text-zinc-400">حالة الربط:</span>
+                  <span className="text-zinc-400">{t('cloud_link_status')}</span>
                   <span className="text-green-400 font-bold flex items-center gap-1.5 bg-green-400/10 px-3 py-1.5 rounded-lg border border-green-400/20">
-                    <Check className="h-4 w-4" /> متصل سحابياً بـ {config.cloud_provider}
+                    <Check className="h-4 w-4" /> {t('cloud_linked_to', { provider: config.cloud_provider })}
                   </span>
                 </div>
                 {syncReport && (
                   <div className="bg-ocean-500/10 border border-ocean-400/20 p-4 rounded-xl text-sm flex flex-col gap-1.5 text-right mt-2" dir="rtl">
                     <span className="font-bold text-ocean-300">{syncReport.status}</span>
                     <span className="text-zinc-300">{syncReport.message}</span>
-                    <span className="text-[11px] text-zinc-500 font-mono mt-1 pt-2 border-t border-ocean-400/10 inline-block">الملفات المرفوعة: {syncReport.files_synced}</span>
+                    <span className="text-[11px] text-zinc-500 font-mono mt-1 pt-2 border-t border-ocean-400/10 inline-block">{t('cloud_files_synced', { count: syncReport.files_synced })}</span>
                   </div>
                 )}
                 <button
                   onClick={handleUnlinkDropbox}
                   className="text-red-400 hover:text-red-300 hover:bg-red-400/10 px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 text-xs self-start mt-auto font-medium"
                 >
-                  <Link2Off className="h-4 w-4" /> إلغاء الربط
+                  <Link2Off className="h-4 w-4" /> {t('cloud_unlink')}
                 </button>
               </>
             ) : (
               <div className="flex flex-col gap-4" dir="rtl">
                 <Typography variant="body" color="muted" className="text-sm leading-relaxed">
-                  1. انقر على الزر أدناه لفتح المتصفح وتسجيل الدخول في Dropbox.
+                  {t('cloud_step1')}
                 </Typography>
                 <Button variant="secondary" onClick={handleGetAuthCode} className="w-full flex items-center justify-center gap-2 py-3">
-                  <Link className="h-4 w-4" /> احصل على كود التفويض من المتصفح
+                  <Link className="h-4 w-4" /> {t('cloud_get_code')}
                 </Button>
                 <Typography variant="body" color="muted" className="text-sm leading-relaxed mt-2">
-                  2. الصق كود التفويض المستلم في الحقل أدناه لتأكيد المزامنة:
+                  {t('cloud_step2')}
                 </Typography>
                 <div className="flex gap-3">
                   <input
                     type="password"
-                    placeholder="الصق الكود هنا..."
+                    placeholder={t('cloud_paste_code')}
                     value={dropboxCode}
                     onChange={(e) => setDropboxCode(e.target.value)}
                     className="flex-1 rounded-xl bg-black/40 border border-white/10 px-4 py-2.5 text-sm text-white focus:outline-none focus:border-ocean-400/50 focus:bg-white/5 transition-all text-right"
                     dir="rtl"
                   />
-                  <Button variant="primary" onClick={handleExchangeCode}>تأكيد</Button>
+                  <Button variant="primary" onClick={handleExchangeCode}>{t('cloud_confirm')}</Button>
                 </div>
               </div>
             )}
@@ -695,7 +699,7 @@ export const CloudView: React.FC<CloudViewProps> = React.memo(({
           {config.cloud_provider && (
             <Button variant="secondary" onClick={handleSyncNow} disabled={syncing} className="w-full mt-4 py-3 font-bold">
               <RefreshCw className={`h-4 w-4 mr-2 ${syncing ? 'animate-spin' : ''}`} />
-              {syncing ? "جاري المزامنة..." : "مزامنة الآن"}
+              {syncing ? t('cloud_syncing') : t('cloud_sync_now')}
             </Button>
           )}
         </GlassPanel>
@@ -715,26 +719,26 @@ export const CloudView: React.FC<CloudViewProps> = React.memo(({
           <div className="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-ocean-500/10 group-hover:border-ocean-400/30 transition-all duration-300">
             <Download size={26} className="text-zinc-500 group-hover:text-ocean-400 transition-colors" />
           </div>
-          <Typography variant="h2" color="primary" className="mb-1.5 text-center">استيراد حزمة (.sa-pack)</Typography>
-          <Typography variant="body" color="muted" className="text-sm text-center">انقر هنا لتصفح واستيراد حزمة sa-pack محلية</Typography>
+          <Typography variant="h2" color="primary" className="mb-1.5 text-center">{t('cloud_import_pack')}</Typography>
+          <Typography variant="body" color="muted" className="text-sm text-center">{t('cloud_import_desc')}</Typography>
         </GlassPanel>
 
         {/* Publish Sound Pack */}
         <GlassPanel intensity="low" className="p-6 border-ocean-500/10 flex flex-col gap-5">
           <Typography variant="h2" color="primary" className="flex items-center justify-end gap-3 border-b border-white/5 pb-4 text-right">
-            نشر حزمة للمجتمع <Upload className="h-5 w-5 text-ocean-400" />
+            {t('cloud_publish_pack')} <Upload className="h-5 w-5 text-ocean-400" />
           </Typography>
           <div className="flex flex-col gap-4 text-right" dir="rtl">
             <input
               type="text"
-              placeholder="عنوان الحزمة..."
+              placeholder={t('cloud_pack_title_placeholder')}
               value={publishTitle}
               onChange={(e) => setPublishTitle(e.target.value)}
               className="rounded-xl bg-black/40 border border-white/10 px-4 py-3 text-sm text-white focus:outline-none focus:border-ocean-400/50 focus:bg-white/5 transition-all"
             />
             <input
               type="text"
-              placeholder="وصف محتويات الحزمة..."
+              placeholder={t('cloud_pack_desc_placeholder')}
               value={publishDesc}
               onChange={(e) => setPublishDesc(e.target.value)}
               className="rounded-xl bg-black/40 border border-white/10 px-4 py-3 text-sm text-white focus:outline-none focus:border-ocean-400/50 focus:bg-white/5 transition-all"
@@ -754,12 +758,12 @@ export const CloudView: React.FC<CloudViewProps> = React.memo(({
               ))}
               {config.sounds.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-4 gap-2 opacity-50">
-                  <span className="text-sm text-zinc-400 text-center">لا يوجد أصوات في المكتبة بعد.</span>
+                  <span className="text-sm text-zinc-400 text-center">{t('cloud_lib_empty')}</span>
                 </div>
               )}
             </div>
             <Button variant="primary" onClick={handlePublishPack} disabled={publishingPack} className="py-3 font-bold">
-              {publishingPack ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> جاري النشر...</> : <><Upload className="h-4 w-4 mr-2" /> نشر الحزمة</>}
+              {publishingPack ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> {t('cloud_publishing')}</> : <><Upload className="h-4 w-4 mr-2" /> {t('cloud_publish_btn')}</>}
             </Button>
           </div>
         </GlassPanel>
@@ -773,13 +777,13 @@ export const CloudView: React.FC<CloudViewProps> = React.memo(({
       {/* ── Community Packs ─────────────────────────────────────────── */}
       <div className="border-t border-white/5 pt-8">
         <Typography variant="h2" color="primary" className="mb-6 flex items-center justify-end gap-3 text-right">
-          الأكثر تحميلاً هذا الأسبوع <Star size={22} className="text-yellow-400 drop-shadow-[0_0_10px_rgba(250,204,21,0.5)]" />
+          {t('cloud_top_downloads')} <Star size={22} className="text-yellow-400 drop-shadow-[0_0_10px_rgba(250,204,21,0.5)]" />
         </Typography>
 
         {loadingPacks ? (
           <div className="py-16 text-center flex flex-col items-center justify-center gap-4">
             <Loader2 className="h-8 w-8 animate-spin text-ocean-400" />
-            <Typography variant="body" color="muted">جاري تحميل حزم المجتمع المقترحة...</Typography>
+            <Typography variant="body" color="muted">{t('cloud_loading_community')}</Typography>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -789,7 +793,7 @@ export const CloudView: React.FC<CloudViewProps> = React.memo(({
                   <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay" />
                   {pack.download_url.includes("StreamAudioCore\\packs") && (
                     <span className="absolute top-3 right-3 text-[10px] px-2.5 py-1 bg-ocean-500/20 text-ocean-300 font-bold border border-ocean-500/30 rounded-lg backdrop-blur-md">
-                      حزمة محلية منشورة
+                      {t('cloud_local_pack')}
                     </span>
                   )}
                   <span className="absolute bottom-3 left-3 text-[11px] px-2.5 py-1 bg-black/60 backdrop-blur-md rounded-lg border border-white/10 font-mono text-zinc-300 font-bold">
@@ -811,7 +815,7 @@ export const CloudView: React.FC<CloudViewProps> = React.memo(({
                       <span className="text-[11px] font-mono text-zinc-400 ml-1.5 font-bold">({pack.rating.toFixed(1)})</span>
                     </div>
                     <Button variant="secondary" onClick={() => handleInstallCommunityPack(pack.download_url)} className="px-4 py-1.5 text-xs font-bold">
-                      تثبيت الحزمة
+                      {t('cloud_install_pack')}
                     </Button>
                   </div>
                 </div>
@@ -821,8 +825,8 @@ export const CloudView: React.FC<CloudViewProps> = React.memo(({
               <div className="col-span-full py-16 text-center">
                 <GlassPanel intensity="low" className="inline-flex flex-col items-center justify-center p-8 border-dashed border-white/10">
                   <Star size={40} className="text-zinc-600 mb-4 opacity-50" />
-                  <Typography variant="h3" color="muted">لا توجد حزم متاحة في المجتمع حالياً.</Typography>
-                  <Typography variant="caption" color="muted" className="mt-2">كن أول من ينشر حزمة صوتية!</Typography>
+                  <Typography variant="h3" color="muted">{t('cloud_no_community_packs')}</Typography>
+                  <Typography variant="caption" color="muted" className="mt-2">{t('cloud_be_first')}</Typography>
                 </GlassPanel>
               </div>
             )}

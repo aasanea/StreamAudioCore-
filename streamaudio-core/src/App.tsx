@@ -29,12 +29,14 @@ import UpdateNotificationSystem from './components/updater/UpdateNotificationSys
 import * as configService from "./services/configService";
 import * as playbackService from "./services/playbackService";
 import * as deviceService from "./services/deviceService";
+import { useLanguage } from "./i18n";
 import "./App.css";
 
 // Helper components
 
 function App() {
   const appVersion = useAppVersion();
+  const { t } = useLanguage();
   // State
   const [config, setConfig] = useState<Config | null>(null);
   const [devices, setDevices] = useState<AudioDevice[]>([]);
@@ -108,8 +110,8 @@ function App() {
   // Custom Premium Alert Modal State
   const [customAlert, setCustomAlert] = useState<{ title: string; message: string } | null>(null);
 
-  const showAlert = (message: string, title: string = "تنبيه") => {
-    setCustomAlert({ title, message });
+  const showAlert = (message: string, title?: string) => {
+    setCustomAlert({ title: title || t('alert_default_title'), message });
   };
 
   // Sampler Configuration Panel
@@ -126,11 +128,11 @@ function App() {
   };
 
   const TABS = [
-    { id: 'library', icon: Library, label: 'المكتبة الصوتية' },
-    { id: 'sampler', icon: LayoutGrid, label: 'واجهة اختصار الصوتيات' },
-    { id: 'dashboard', icon: Sliders, label: 'توجيه الصوت ورادار المايك' },
-    { id: 'cloud', icon: Cloud, label: 'المزامنة والمجتمع' },
-    { id: 'downloader', icon: ArrowDownToLine, label: 'التحميل والقص' },
+    { id: 'library', icon: Library, label: t('tab_library') },
+    { id: 'sampler', icon: LayoutGrid, label: t('tab_sampler') },
+    { id: 'dashboard', icon: Sliders, label: t('tab_dashboard') },
+    { id: 'cloud', icon: Cloud, label: t('tab_cloud') },
+    { id: 'downloader', icon: ArrowDownToLine, label: t('tab_downloader') },
   ] as const;
 
   // Initial Load
@@ -618,7 +620,7 @@ function App() {
       <div className="flex h-screen items-center justify-center bg-zinc-950 text-white">
         <div className="text-center">
           <RefreshCw className="mx-auto h-12 w-12 animate-spin text-cyan-400" />
-          <p className="mt-4 text-zinc-400 font-medium">جاري تحميل منصة StreamAudio Core {appVersion}...</p>
+          <p className="mt-4 text-zinc-400 font-medium">{t('app_loading', { appVersion })}</p>
         </div>
       </div>
     );
@@ -822,7 +824,7 @@ function App() {
                       {sound.name}
                     </span>
                   </div>
-                  <span className="text-[11px]" style={{ color: "#3a4a50" }}>اختر خلية للتعيين</span>
+                  <span className="text-[11px]" style={{ color: "#3a4a50" }}>{t('terminal_choose_cell')}</span>
                 </div>
 
                 {/* Pad grid */}
@@ -909,7 +911,7 @@ function App() {
                           height: "6px",
                           background: modalPage === p ? "#6c8089" : "rgba(255,255,255,0.1)",
                         }}
-                        title={`الصفحة ${p + 1}`}
+                        title={t('terminal_page', { page: p + 1, total: numPages })}
                       />
                     ))}
                   </div>
@@ -940,7 +942,7 @@ function App() {
                     <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 14 14" fill="none">
                       <path d="M3 7h8M8 4.5L10.5 7 8 9.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
-                    تحميل دون حفظ كـ اختصار
+                    {t('terminal_download_no_shortcut')}
                   </button>
                 </div>
               </motion.div>
@@ -979,7 +981,7 @@ function App() {
                   onClick={() => setCustomAlert(null)}
                   className="bg-neon-cyan text-white font-bold px-8 py-2 rounded-xl text-xs hover:bg-[#6c8089]/90 transition shadow-glow cursor-pointer"
                 >
-                  موافق
+                  {t('alert_ok')}
                 </button>
               </div>
             </motion.div>

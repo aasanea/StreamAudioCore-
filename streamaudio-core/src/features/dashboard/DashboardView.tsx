@@ -5,6 +5,7 @@ import {
 } from "lucide-react";
 import { GlassPanel } from "../../components/ui/GlassPanel";
 import { AudioDevice } from "../../types";
+import { useLanguage } from "../../i18n";
 
 // Helper to clean device names containing markdown artifacts or broken unicode
 const cleanDeviceName = (name: string): string => {
@@ -153,6 +154,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   globalOutputDevice,
   onDeviceChange
 }) => {
+  const { t } = useLanguage();
   const [gain, setGain] = useState(70);
   const [micActive, setMicActive] = useState(true);
   const [noiseSuppression, setNoiseSuppression] = useState(true);
@@ -163,7 +165,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const inputDevices = useMemo(() => {
     // Return mock input devices for rich UI representation
     return [
-      { id: "default", name: "الافتراضي (Default Microphone)", is_sonar: false },
+      { id: "default", name: t('dash_mock_default'), is_sonar: false },
       { id: "mic-1", name: "SteelSeries Sonar - Microphone (Virtual)", is_sonar: true },
       { id: "mic-2", name: "Yeti Stereo Microphone", is_sonar: false },
       { id: "mic-3", name: "Virtual Audio Cable (Input)", is_sonar: false }
@@ -182,9 +184,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div className="text-right">
           <h1 className="text-2xl font-black text-brand-100 flex items-center gap-2.5">
             <Sliders className="text-[#80AAA0] h-6 w-6" />
-            لوحة توجيه الصوت والمايكروفون
+            {t('dash_title')}
           </h1>
-          <p className="text-xs text-brand-300 mt-1">إدارة مسارات الإدخال والإخراج وتهيئة إعدادات الصوت الافتراضية</p>
+          <p className="text-xs text-brand-300 mt-1">{t('dash_subtitle')}</p>
         </div>
         
         <div className="flex gap-2">
@@ -195,7 +197,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             }}
           >
             <RefreshCw size={12} className="animate-spin-slow" />
-            تحديث الأجهزة
+            {t('dash_refresh_devices')}
           </button>
         </div>
       </div>
@@ -208,10 +210,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           <GlassPanel intensity="low" className="p-6 flex flex-col gap-5 bg-brand-500/5 border-brand-500/10 relative overflow-hidden">
             <div className="flex justify-between items-start z-10">
               <div className="text-right">
-                <span className="text-[10px] font-bold text-[#80AAA0] uppercase tracking-widest">إعدادات الإدخال</span>
+                <span className="text-[10px] font-bold text-[#80AAA0] uppercase tracking-widest">{t('dash_input_settings')}</span>
                 <h3 className="text-lg font-black text-brand-100 mt-1 flex items-center gap-2">
                   <Mic size={18} className="text-[#80AAA0]" />
-                  رادار المايكروفون الافتراضي
+                  {t('dash_mic_radar')}
                 </h3>
               </div>
               <button 
@@ -222,13 +224,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     : "bg-red-500/20 text-red-400 border border-red-500/40"
                 }`}
               >
-                {micActive ? "نشط" : "مغلق"}
+                {micActive ? t('dash_active') : t('dash_inactive')}
               </button>
             </div>
 
             {/* Input Selection Dropdown */}
             <div className="flex flex-col gap-1.5 text-right z-10">
-              <label className="text-[10px] text-brand-300 font-bold tracking-wide">جهاز المايكروفون</label>
+              <label className="text-[10px] text-brand-300 font-bold tracking-wide">{t('dash_mic_device')}</label>
               <div className="relative group">
                 <select 
                   value={selectedInput}
@@ -251,7 +253,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <div className="flex flex-col gap-2 text-right z-10">
               <div className="flex justify-between items-center text-[10px] text-brand-300 font-bold uppercase tracking-wider">
                 <span>Gain: {gain}%</span>
-                <span>مستوى الالتقاط</span>
+                <span>{t('dash_pickup_level')}</span>
               </div>
               <input 
                 type="range" 
@@ -268,19 +270,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
             {/* Hardware Filters */}
             <div className="flex flex-col gap-3 pt-2">
-              <span className="text-[10px] text-brand-300 font-bold uppercase tracking-wider text-right">مصفيات الصوت التلقائية</span>
+              <span className="text-[10px] text-brand-300 font-bold uppercase tracking-wider text-right">{t('dash_dsp_filters')}</span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <ToggleSwitch 
                   checked={noiseSuppression} 
                   onChange={setNoiseSuppression} 
-                  label="مانع التشويش (Noise Suppression)" 
-                  description="عزل تلقائي لأصوات الخلفية" 
+                  label={t('dash_noise_sup')}
+                  description={t('dash_noise_sup_desc')}
                 />
                 <ToggleSwitch 
                   checked={echoCancellation} 
                   onChange={setEchoCancellation} 
-                  label="مانع الصدى (Echo Cancellation)" 
-                  description="منع تغذية المايكروفون المرتدة" 
+                  label={t('dash_echo_cancel')}
+                  description={t('dash_echo_cancel_desc')}
                 />
               </div>
             </div>
@@ -291,16 +293,16 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div className="md:col-span-5 flex flex-col gap-6">
           <GlassPanel intensity="low" className="p-6 flex flex-col gap-5 bg-brand-500/5 border-brand-500/10">
             <div className="text-right">
-              <span className="text-[10px] font-bold text-[#80AAA0] uppercase tracking-widest">إدارة المخرجات</span>
+              <span className="text-[10px] font-bold text-[#80AAA0] uppercase tracking-widest">{t('dash_output_management')}</span>
               <h3 className="text-lg font-black text-brand-100 mt-1 flex items-center gap-2">
                 <Volume2 size={18} className="text-[#80AAA0]" />
-                مخرج النظام العام
+                {t('dash_system_output')}
               </h3>
             </div>
 
             {/* System Audio Dropdown (Synced with top bar dropdown) */}
             <div className="flex flex-col gap-1.5 text-right">
-              <label className="text-[10px] text-brand-300 font-bold tracking-wide">جهاز المخرج الأساسي</label>
+              <label className="text-[10px] text-brand-300 font-bold tracking-wide">{t('dash_main_output')}</label>
               <div className="relative group">
                 <select 
                   value={globalOutputDevice}
@@ -322,21 +324,21 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
             {/* Routing Cards mock */}
             <div className="flex flex-col gap-2.5">
-              <span className="text-[10px] text-brand-300 font-bold uppercase tracking-wider text-right">قنوات الصوت الافتراضية (Virtual Cables)</span>
+              <span className="text-[10px] text-brand-300 font-bold uppercase tracking-wider text-right">{t('dash_virtual_cables')}</span>
               
               <div className="p-3 bg-black/25 border border-brand-500/10 rounded-xl flex items-center justify-between">
-                <span className="text-[10px] px-2 py-0.5 rounded bg-brand-500/10 text-brand-200 border border-brand-500/20">منفذ نشط</span>
+                <span className="text-[10px] px-2 py-0.5 rounded bg-brand-500/10 text-brand-200 border border-brand-500/20">{t('dash_active_port')}</span>
                 <div className="text-right">
-                  <h4 className="text-xs font-bold text-brand-100">قناة الألعاب (Gaming Channel)</h4>
-                  <p className="text-[9px] text-brand-300 mt-0.5">موجهة تلقائياً إلى سماعة الرأس الأساسية</p>
+                  <h4 className="text-xs font-bold text-brand-100">{t('dash_gaming_channel')}</h4>
+                  <p className="text-[9px] text-brand-300 mt-0.5">{t('dash_gaming_desc')}</p>
                 </div>
               </div>
 
               <div className="p-3 bg-black/25 border border-brand-500/10 rounded-xl flex items-center justify-between">
-                <span className="text-[10px] px-2 py-0.5 rounded bg-[#80AAA0]/10 text-[#80AAA0] border border-[#80AAA0]/20">مستمع حالي</span>
+                <span className="text-[10px] px-2 py-0.5 rounded bg-[#80AAA0]/10 text-[#80AAA0] border border-[#80AAA0]/20">{t('dash_current_listener')}</span>
                 <div className="text-right">
-                  <h4 className="text-xs font-bold text-brand-100">قناة المحادثات (Chat Channel)</h4>
-                  <p className="text-[9px] text-brand-300 mt-0.5">موجهة لتطبيق Discord وتطبيقات التواصل</p>
+                  <h4 className="text-xs font-bold text-brand-100">{t('dash_chat_channel')}</h4>
+                  <p className="text-[9px] text-brand-300 mt-0.5">{t('dash_chat_desc')}</p>
                 </div>
               </div>
             </div>
@@ -346,11 +348,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           <GlassPanel intensity="low" className="p-5 flex flex-col gap-3 bg-brand-500/5 border-brand-500/10 hover:border-brand-500/20 transition-all duration-300">
             <div className="flex items-center justify-between">
               <Radio className="text-[#80AAA0] animate-pulse h-4 w-4" />
-              <span className="text-[10px] font-bold text-brand-300 uppercase tracking-widest">موجز الأداء</span>
+              <span className="text-[10px] font-bold text-brand-300 uppercase tracking-widest">{t('dash_perf_summary')}</span>
             </div>
             <div className="text-right">
-              <h4 className="text-xs font-black text-brand-100">السامبلر ولوحة الاختصارات جاهزة</h4>
-              <p className="text-[10px] text-brand-300 mt-0.5">جميع الأزرار الصوتية موجهة تلقائياً بناء على إعدادات المخرج أعلاه.</p>
+              <h4 className="text-xs font-black text-brand-100">{t('dash_sampler_ready')}</h4>
+              <p className="text-[10px] text-brand-300 mt-0.5">{t('dash_routing_info')}</p>
             </div>
           </GlassPanel>
         </div>
