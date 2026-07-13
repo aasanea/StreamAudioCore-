@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="streamaudio-core/public/tauri.svg" alt="Tauri Logo" width="100"/>
+<img src="streamaudio-core/src-tauri/icons/Square310x310Logo.png" alt="StreamAudioCore Logo" width="150"/>
   <h1>🎵 StreamAudioCore</h1>
 
   <p>
