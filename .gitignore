@@ -1,0 +1,19 @@
+# Rust build artifacts
+**/target/
+
+# Node packages and frontend build targets
+**/node_modules/
+**/dist/
+**/dist-ssr/
+
+# Local configuration & system caches
+*.local
+.vscode/
+.DS_Store
+Thumbs.db
+.wrangler/
+streamaudio-core/~/
+Deploy/
+
+# Ignore large binaries
+*.exe

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <title>StreamAudio Core</title>
+  <script>
+  window.addEventListener('error', function(e) {
+    fetch('http://localhost:9999', { method: 'POST', body: 'ERROR CAUGHT' }).catch(() => {});
+  });
+  window.addEventListener('unhandledrejection', function(e) {
+    fetch('http://localhost:9999', { method: 'POST', body: 'PROMISE REJECTION CAUGHT' }).catch(() => {});
+  });
+  var old = console.error;
+  console.error = function() {
+    fetch('http://localhost:9999', { method: 'POST', body: 'CONSOLE.ERROR CAUGHT' }).catch(() => {});
+    old.apply(console, arguments);
+  };
+  
+  // Disable native context menu
+  document.addEventListener('contextmenu', event => {
+    // Only allow context menu on inputs
+    if (event.target.tagName !== 'INPUT' && event.target.tagName !== 'TEXTAREA') {
+      event.preventDefault();
+    }
+  });
+</script></head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,62 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "streamaudio-core",
+  "version": "1.1.0",
+  "identifier": "com.abdullah.streamaudio-core",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "streamaudio-core",
+        "width": 1280,
+        "height": 800,
+        "resizable": false,
+        "decorations": false,
+        "shadow": true
+      }
+    ],
+    "security": {
+      "csp": null,
+      "assetProtocol": {
+        "enable": true,
+        "scope": ["**"]
+      }
+    }
+  },
+  "bundle": { "createUpdaterArtifacts": true,
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "nsis": {
+        "installerIcon": "icons/icon.ico",
+        "headerImage": "icons/nsis-header.bmp",
+        "sidebarImage": "icons/nsis-sidebar.bmp"
+      }
+    }
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IERDMzNENUNCRDlDOUYyRjUKUldUMThzblp5OVV6M0kvQTY2ZTVtS2FTMXlMWEQrbjVEcVBvNjV5N3R1cFRyeG5kZ0duRmYveHkK",
+      "endpoints": [
+        "https://updates.aasanea.com/releases/latest.json"
+      ],
+      "dialog": false,
+      "windows": {
+        "installMode": "basicUi"
+      }
+    }
+  }
+}
+
