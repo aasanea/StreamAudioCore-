@@ -1,101 +1,133 @@
 <div align="center">
+  <img src="streamaudio-core/public/tauri.svg" alt="Tauri Logo" width="100"/>
   <h1>🎵 StreamAudioCore</h1>
-  <p><b>A high-performance desktop application for advanced audio and media processing.</b></p>
-  <p><i>مزيج من الأداء الفائق والواجهة العصرية لمعالجة وتشغيل الصوتيات.</i></p>
-  <br>
-  <a href="#english">English</a> • <a href="#العربية">العربية</a>
+
+  <p>
+    <b>A high-performance desktop application for advanced audio and media processing.</b>
+    <br/>
+    <i>مزيج من الأداء الفائق والواجهة العصرية لمعالجة وتشغيل الصوتيات.</i>
+  </p>
+
+  <p>
+    <a href="#-english"><b>English</b></a> •
+    <a href="#-العربية"><b>العربية</b></a>
+  </p>
+
+  <p>
+    <img src="https://img.shields.io/badge/Tauri-FFC131?style=for-the-badge&logo=tauri&logoColor=white" alt="Tauri" />
+    <img src="https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white" alt="Rust" />
+    <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
+    <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  </p>
+
+  <br/>
+  
+  <img src="streamaudio-core/docs/screenshots/screenshot-1.png" alt="Main Interface" width="100%" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"/>
 </div>
 
 ---
 
-<div align="center">
-  <!-- Place your main screenshot here -->
-  <img src="docs/screenshots/main-dashboard.png" alt="StreamAudioCore Dashboard Screenshot" width="800"/>
-  <br>
-  <p><i>(👈 قم برفع صورة الواجهة الرئيسية وضعها في مسار `docs/screenshots/main-dashboard.png`)</i></p>
-</div>
+## 🌍 Languages / اللغات
+- [English Documentation](#-english)
+- [التوثيق باللغة العربية](#-العربية)
 
 ---
 
-<h2 id="english">🇬🇧 English</h2>
+<h2 id="-english">🇬🇧 English</h2>
 
-**StreamAudioCore** is an integrated software project that relies on **Tauri** technology to create fast, efficient, and visually stunning desktop applications. It provides an advanced environment for processing and playing audio and media with ultra-high performance, thanks to its backend written in **Rust**.
+**StreamAudioCore** is an integrated software project engineered with **Tauri** to deliver a blazing-fast, secure, and visually stunning desktop experience. With a core engine written in **Rust** and a frontend powered by **React & TypeScript**, it provides an advanced environment for processing and playing audio and media with ultra-high performance.
 
 ### ✨ Key Features
-* 🚀 **High Performance:** Built on the **Tauri** (Rust) engine, ensuring low memory consumption and incredible responsiveness compared to standard electron-based alternatives.
-* 🎨 **Modern UI:** Professional User Interface built with **React**, **TypeScript**, and **Vite** to guarantee the best user experience (UX).
-* 🌊 **Waveform Rendering:** Smooth and precise audio waveform processing and visualization.
-* 🎛️ **Advanced Audio Control:** Advanced control over audio channels with seamless output device routing.
-* 🔠 **Custom Fonts:** Includes premium built-in fonts to enhance the visual appeal (located in the `front/` directory).
 
-### 📸 Screenshots
+- 🚀 **Blazing Fast Performance:** Powered by a Rust backend, ensuring minimal memory footprint and instant responsiveness compared to traditional electron-based apps.
+- 🎨 **Modern & Fluid UI:** A highly polished user interface built with React, TypeScript, and Vite to guarantee an exceptional user experience (UX).
+- 🌊 **Real-time Waveform Rendering:** Smooth, precise, and hardware-accelerated audio waveform visualization.
+- 🎛️ **Advanced Audio Routing:** Granular control over audio channels with seamless output device routing and selection.
+- 🔠 **Premium Typography:** Integrates custom, high-quality fonts to elevate the visual aesthetics.
+
+### 📸 Application Gallery
+
 <div align="center">
-  <img src="docs/screenshots/audio-player.png" alt="Audio Player UI" width="400"/>
-  <img src="docs/screenshots/settings.png" alt="Settings UI" width="400"/>
-  <br>
-  <p><i>(Place your application screenshots in the `docs/screenshots/` directory to show up here)</i></p>
+  <img src="streamaudio-core/docs/screenshots/screenshot-2.png" alt="Screenshot 2" width="48%" style="border-radius: 8px; margin: 1%;"/>
+  <img src="streamaudio-core/docs/screenshots/screenshot-3.png" alt="Screenshot 3" width="48%" style="border-radius: 8px; margin: 1%;"/>
+  <img src="streamaudio-core/docs/screenshots/screenshot-4.png" alt="Screenshot 4" width="48%" style="border-radius: 8px; margin: 1%;"/>
+  <img src="streamaudio-core/docs/screenshots/screenshot-5.png" alt="Screenshot 5" width="48%" style="border-radius: 8px; margin: 1%;"/>
 </div>
 
-### 📂 Project Structure
+### 📂 Architecture Overview
 ```text
 StreamAudioCore/
-├── streamaudio-core/      # Main Application (React Frontend + Rust Backend)
-├── front/                 # Directory containing custom fonts
-├── DESIGN_SYSTEM.md       # UI/UX Design System Guide
-├── DEVELOPER1_GUIDE.md    # Developer Guide & System Architecture
-└── RELEASE_WORKFLOW.md    # Release & Deployment Workflow
+├── streamaudio-core/      # Core Application (React UI + Rust Backend)
+├── front/                 # Custom Typography Assets
+├── DESIGN_SYSTEM.md       # Comprehensive UI/UX Design Guidelines
+├── DEVELOPER1_GUIDE.md    # Developer Documentation & Architecture
+└── RELEASE_WORKFLOW.md    # Deployment & CI/CD Workflows
 ```
 
-### 🛠️ Development & Setup
-To run or develop the project locally, ensure you have the following prerequisites installed:
-1. **[Node.js](https://nodejs.org/):** (v18 or newer).
-2. **[Rust & Cargo](https://rustup.rs/):** The backend compiler.
-3. **C++ Build Tools:** For Windows (Visual Studio Build Tools with C++ support).
+### 🛠️ Getting Started
 
-#### 🚀 Quick Start
+To compile and run the project locally, ensure you have the following installed:
+1. **[Node.js](https://nodejs.org/):** (v18.x or newer).
+2. **[Rust Toolchain](https://rustup.rs/):** For compiling the core backend.
+3. **C++ Build Tools:** For Windows (Visual Studio Build Tools with MSVC).
+
+#### 🚀 Quick Installation
 ```bash
+# Navigate to the core application directory
 cd streamaudio-core
+
+# Install frontend dependencies
 npm install
+
+# Launch the development server
 npm run tauri dev
 ```
 
 ---
 
-<h2 id="العربية">🇸🇦 العربية</h2>
+<h2 id="-العربية">🇸🇦 العربية</h2>
 
-**StreamAudioCore** هو مشروع برمجي متكامل يعتمد على تقنية **Tauri** لإنشاء تطبيقات سطح مكتب سريعة وفعالة ومبهرة بصرياً. يوفر المشروع بيئة متقدمة لمعالجة وتشغيل الصوتيات والوسائط بأداء عالٍ جداً بفضل النواة المبرمجة بلغة **Rust**.
+**StreamAudioCore** هو مشروع برمجي متقدم يعتمد على إطار عمل **Tauri** لإنشاء تطبيقات سطح مكتب سريعة، آمنة، ومبهرة بصرياً. يجمع المشروع بين قوة لغة **Rust** في معالجة العمليات الخلفية، ومرونة **React** لتوفير واجهة مستخدم احترافية وتجربة استماع وتعديل صوتيات لا مثيل لها.
 
 ### ✨ الميزات الرئيسية
-* 🚀 **أداء فائق:** مبني على محرك **Tauri** (Rust) مما يضمن استهلاكاً منخفضاً للذاكرة وسرعة استجابة مذهلة.
-* 🎨 **واجهة عصرية:** واجهة مستخدم احترافية مبنية باستخدام **React**, **TypeScript**, و **Vite**.
-* 🌊 **عرض الموجات الصوتية (Waveform):** معالجة وعرض الموجات الصوتية بشكل دقيق وسلس.
-* 🎛️ **تحكم متقدم بالصوت:** إمكانية التحكم المتقدم في قنوات الصوت واختيار وتخصيص أجهزة الإخراج بسلاسة.
-* 🔠 **خطوط مخصصة مدمجة:** تم تضمين خطوط احترافية لتعزيز جمالية العرض (متواجدة في مجلد `front/`).
 
-### 📸 لقطات الشاشة (Screenshots)
+- 🚀 **أداء خارق للعادة:** بفضل الاعتماد على محرك Rust، يستهلك التطبيق موارد أقل بكثير من تطبيقات سطح المكتب التقليدية ويوفر استجابة فورية.
+- 🎨 **واجهة عصرية وانسيابية:** تم تصميم وبناء واجهة المستخدم بعناية باستخدام أحدث تقنيات الويب (React, TypeScript, Vite).
+- 🌊 **تصيير الموجات الصوتية (Waveform):** عرض حي ودقيق لموجات الصوت مع تأثيرات بصرية مدعومة بتسريع الأجهزة (Hardware Acceleration).
+- 🎛️ **توجيه وتحكم صوتي متقدم:** إمكانية فصل قنوات الصوت والتحكم الدقيق في مخارج الصوت (Output Devices) بمرونة تامة.
+- 🔠 **هوية بصرية مميزة:** استخدام خطوط مدفوعة ومخصصة تم دمجها برمجياً لرفع مستوى الجمالية في واجهات الاستخدام.
+
+### 📸 معرض الصور
+
 <div align="center">
-  <img src="docs/screenshots/audio-player.png" alt="مشغل الصوت" width="400"/>
-  <img src="docs/screenshots/settings.png" alt="الإعدادات" width="400"/>
-  <br>
-  <p><i>(قم برفع بقية صور التطبيق في مجلد `docs/screenshots/` لتظهر هنا)</i></p>
+  <img src="streamaudio-core/docs/screenshots/screenshot-2.png" alt="لقطة الشاشة 2" width="48%" style="border-radius: 8px; margin: 1%;"/>
+  <img src="streamaudio-core/docs/screenshots/screenshot-3.png" alt="لقطة الشاشة 3" width="48%" style="border-radius: 8px; margin: 1%;"/>
+  <img src="streamaudio-core/docs/screenshots/screenshot-4.png" alt="لقطة الشاشة 4" width="48%" style="border-radius: 8px; margin: 1%;"/>
+  <img src="streamaudio-core/docs/screenshots/screenshot-5.png" alt="لقطة الشاشة 5" width="48%" style="border-radius: 8px; margin: 1%;"/>
 </div>
 
 ### 🛠️ إعداد بيئة التطوير والتشغيل
-لتتمكن من تشغيل أو تطوير المشروع على جهازك، تأكد من توفر المتطلبات الأساسية:
-1. **[Node.js](https://nodejs.org/):** (الإصدار 18 أو أحدث).
-2. **[Rust & Cargo](https://rustup.rs/):** المعالج الخاص بنواة التطبيق الخلفية.
-3. **أدوات البناء (C++ Build Tools):** لنظام ويندوز (Visual Studio Build Tools مع دعم C++).
 
-#### 🚀 خطوات التشغيل
+للشروع في تطوير أو تشغيل المشروع محلياً، يرجى التأكد من توفر الأدوات التالية:
+1. **[Node.js](https://nodejs.org/):** (الإصدار 18 أو أحدث).
+2. **[Rust & Cargo](https://rustup.rs/):** المحول البرمجي (Compiler) الخاص بلغة Rust.
+3. **أدوات بناء C++:** لنظام التشغيل Windows (Visual Studio Build Tools).
+
+#### 🚀 خطوات التشغيل السريع
 ```bash
+# الانتقال إلى مجلد التطبيق
 cd streamaudio-core
+
+# تثبيت الاعتماديات الخاصة بالواجهة
 npm install
+
+# تشغيل بيئة التطوير الخاصة بـ Tauri
 npm run tauri dev
 ```
 
 ---
 
-<br>
+<br/>
 <div align="center">
-  <b>صُنع بشغف 💻 وتميز | Made with ❤️ and Excellence</b>
+  <b>Developed with ❤️ & Excellence | صُنع بشغف 💻 وتميز</b>
 </div>
