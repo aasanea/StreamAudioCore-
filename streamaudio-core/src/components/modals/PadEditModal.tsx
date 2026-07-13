@@ -2,6 +2,7 @@ import React from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { X } from 'lucide-react';
 import { neonColors } from '../../constants';
+import { useLanguage } from '../../i18n';
 
 export interface PadSettingsState {
   editingPadIndex: number | null;
@@ -41,6 +42,7 @@ export const PadEditModal: React.FC<PadEditModalProps> = ({
   padSettingsState,
   padSettingsActions
 }) => {
+  const { t } = useLanguage();
   const {
     editingPadIndex,
     padMuted,
@@ -82,7 +84,7 @@ export const PadEditModal: React.FC<PadEditModalProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="text-right text-base font-bold text-text-main border-b border-border-main pb-3" dir="rtl">
-          تعديل خيارات الاختصار للخلية #{editingPadIndex + 1}
+          {t('pad_edit_title', { pad: editingPadIndex + 1 })}
         </h3>
         
         {/* Lock, Mute, Solo row */}
@@ -94,7 +96,7 @@ export const PadEditModal: React.FC<PadEditModalProps> = ({
               onChange={(e) => setPadMuted(e.target.checked)}
               className="rounded border-border-main text-neon-cyan focus:ring-neon-cyan/50"
             />
-            كتم الصوت (Mute)
+            {t('pad_mute')}
           </label>
           <label className="flex items-center gap-2 text-xs text-text-main cursor-pointer">
             <input 
@@ -103,7 +105,7 @@ export const PadEditModal: React.FC<PadEditModalProps> = ({
               onChange={(e) => setPadSoloed(e.target.checked)}
               className="rounded border-border-main text-neon-cyan focus:ring-neon-cyan/50"
             />
-            عزف منفرد (Solo)
+            {t('pad_solo')}
           </label>
           <label className="flex items-center gap-2 text-xs text-text-main cursor-pointer">
             <input 
@@ -112,32 +114,32 @@ export const PadEditModal: React.FC<PadEditModalProps> = ({
               onChange={(e) => setPadLocked(e.target.checked)}
               className="rounded border-border-main text-neon-cyan focus:ring-neon-cyan/50"
             />
-            قفل الخلية (Lock)
+            {t('pad_lock')}
           </label>
         </div>
 
         {/* Filter DSP settings */}
         <div className="flex flex-col gap-2" dir="rtl">
-          <label className="text-xs text-text-main font-semibold">تأثير وفلاتر DSP الصوتية الفورية (FX):</label>
+          <label className="text-xs text-text-main font-semibold">{t('pad_dsp_filters')}</label>
           <select
             value={padFilter}
             onChange={(e) => setPadFilter(e.target.value)}
             className="rounded-lg bg-primary border border-border-main px-3 py-2.5 text-xs text-text-main focus:outline-none focus:border-neon-cyan/50 transition-colors cursor-pointer"
           >
-            <option value="none">بدون فلاتر (None)</option>
-            <option value="lowpass">فلتر تردد منخفض (Low-Pass Filter)</option>
-            <option value="highpass">فلتر تردد مرتفع (High-Pass Filter)</option>
-            <option value="reverb">صدى خفيف (Small Reverb)</option>
+            <option value="none">{t('pad_filter_none')}</option>
+            <option value="lowpass">{t('pad_filter_lp')}</option>
+            <option value="highpass">{t('pad_filter_hp')}</option>
+            <option value="reverb">{t('pad_filter_reverb')}</option>
           </select>
         </div>
 
         {/* Background Image selector */}
         <div className="flex flex-col gap-2" dir="rtl">
-          <label className="text-xs text-text-main font-semibold">صورة الخلفية للخلية (اختياري):</label>
+          <label className="text-xs text-text-main font-semibold">{t('pad_bg_image')}</label>
           <div className="flex gap-2 items-center">
             <input 
               type="text"
-              placeholder="لم يتم تحديد صورة..."
+              placeholder={t('pad_no_image')}
               value={padImagePath || ""}
               readOnly
               className="flex-1 rounded-lg bg-primary border border-border-main px-3 py-2 text-xs text-text-main focus:outline-none text-right truncate cursor-not-allowed"
@@ -155,13 +157,13 @@ export const PadEditModal: React.FC<PadEditModalProps> = ({
               }}
               className="bg-primary border border-border-main hover:border-[#6c8089]/30 text-zinc-400 hover:text-white px-3 py-2 rounded-lg text-xs font-semibold cursor-pointer transition-colors flex-shrink-0"
             >
-              تصفح...
+              {t('pad_browse')}
             </button>
             {padImagePath && (
               <button
                 onClick={() => setPadImagePath(null)}
                 className="bg-red-950/40 border border-red-900/50 text-red-400 hover:text-red-300 px-2 py-2 rounded-lg text-xs font-semibold cursor-pointer transition-colors flex-shrink-0"
-                title="إزالة الصورة"
+                title={t('pad_remove_image')}
               >
                 <X className="h-4 w-4" />
               </button>
@@ -171,7 +173,7 @@ export const PadEditModal: React.FC<PadEditModalProps> = ({
 
         {/* Color selector */}
         <div className="flex flex-col gap-2" dir="rtl">
-          <label className="text-xs text-text-main font-semibold">لون الخلية والموجة الصوتية:</label>
+          <label className="text-xs text-text-main font-semibold">{t('pad_color')}</label>
           <div className="flex gap-2 justify-between">
             {neonColors.map(nc => (
               <button
@@ -190,7 +192,7 @@ export const PadEditModal: React.FC<PadEditModalProps> = ({
         {/* Cue points */}
         <div className="grid grid-cols-2 gap-3" dir="rtl">
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] text-zinc-505 font-medium">نقطة البداية (ms):</label>
+            <label className="text-[10px] text-zinc-505 font-medium">{t('pad_start_point')}</label>
             <input 
               type="number"
               value={padCueStart}
@@ -199,7 +201,7 @@ export const PadEditModal: React.FC<PadEditModalProps> = ({
             />
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] text-zinc-505 font-medium">نقطة النهاية (0 للملف كامل):</label>
+            <label className="text-[10px] text-zinc-505 font-medium">{t('pad_end_point')}</label>
             <input 
               type="number"
               value={padCueEnd}
@@ -212,7 +214,7 @@ export const PadEditModal: React.FC<PadEditModalProps> = ({
         {/* Speed slider */}
         <div className="flex flex-col gap-2" dir="rtl">
           <div className="flex justify-between items-center text-xs">
-            <label className="text-text-main font-semibold">سرعة ونغمة التشغيل:</label>
+            <label className="text-text-main font-semibold">{t('pad_speed_pitch')}</label>
             <span className="text-[#6c8089] font-mono">{padSpeed.toFixed(2)}x</span>
           </div>
           <input 
@@ -228,7 +230,7 @@ export const PadEditModal: React.FC<PadEditModalProps> = ({
 
         {/* Play mode */}
         <div className="flex flex-col gap-2" dir="rtl">
-          <label className="text-xs text-text-main font-semibold">نمط تشغيل الاختصار:</label>
+          <label className="text-xs text-text-main font-semibold">{t('pad_play_mode')}</label>
           <select
             value={padMode}
             onChange={(e) => setPadMode(e.target.value)}
@@ -247,13 +249,13 @@ export const PadEditModal: React.FC<PadEditModalProps> = ({
             onClick={() => setEditingPadIndex(null)}
             className="px-5 py-2.5 rounded-lg bg-primary border border-border-main text-zinc-400 hover:text-text-main hover:bg-zinc-800 text-xs font-bold transition-colors cursor-pointer"
           >
-            إلغاء
+            {t('pad_cancel')}
           </button>
           <button
             onClick={savePadOptions}
             className="px-5 py-2.5 rounded-lg bg-[#6c8089] text-black font-extrabold text-xs shadow-glow hover:bg-[#6c8089]/90 transition-colors cursor-pointer"
           >
-            حفظ التغييرات
+            {t('pad_save')}
           </button>
         </div>
       </div>

@@ -9,6 +9,7 @@ import {
   Loader2, ChevronDown, Globe, FileVideo,
   Music, GripVertical
 } from "lucide-react";
+import { useLanguage } from "../i18n";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -144,6 +145,7 @@ interface CutModalProps {
 }
 
 const CutModal = ({ item, onClose, onToast }: CutModalProps) => {
+  const { t } = useLanguage();
   const [duration, setDuration] = useState(0);
   const [currentSec, setCurrentSec] = useState(0);
   const [startSec, setStartSec] = useState(0);
@@ -243,10 +245,10 @@ const CutModal = ({ item, onClose, onToast }: CutModalProps) => {
         startTime: fmt(startSec),
         endTime: fmt(endSec),
       });
-      onToast(`✂️ تم القص وحُفظ: ${result.split(/[\\/]/).pop()}`, "success");
+      onToast(`${t('dl_cut_success')} ${result.split(/[\\/]/).pop()}`, "success");
       onClose();
     } catch (err: any) {
-      onToast(`فشل القص: ${err}`, "error");
+      onToast(`${t('dl_cut_fail')} ${err}`, "error");
     } finally {
       setCutting(false);
     }
@@ -271,7 +273,7 @@ const CutModal = ({ item, onClose, onToast }: CutModalProps) => {
           <div className="text-right">
             <h3 className="text-sm font-bold text-white flex items-center gap-2 justify-end">
               <Scissors className="h-4 w-4 text-ocean-400" />
-              محرر القص الاحترافي
+              {t('dl_cut_title')}
             </h3>
             <p className="text-[11px] text-zinc-500 mt-0.5 truncate max-w-[340px]">{item.title}</p>
           </div>
@@ -426,25 +428,25 @@ const CutModal = ({ item, onClose, onToast }: CutModalProps) => {
           <div className="flex justify-between items-center mt-6 px-1">
             {/* Start time */}
             <div className="flex flex-col items-center gap-0.5">
-              <span className="text-[9px] text-zinc-600 uppercase tracking-widest">بداية</span>
+              <span className="text-[9px] text-zinc-600 uppercase tracking-widest">{t('dl_cut_start')}</span>
               <span className="font-mono text-xs text-ocean-400 font-bold">{fmt(startSec)}</span>
             </div>
 
             {/* Current / Duration */}
             <div className="flex flex-col items-center gap-0.5">
-              <span className="text-[9px] text-zinc-600 uppercase tracking-widest">المقطوع</span>
+              <span className="text-[9px] text-zinc-600 uppercase tracking-widest">{t('dl_cut_duration')}</span>
               <span className="font-mono text-xs text-white font-bold">{fmt(trimDuration)}</span>
             </div>
 
             {/* Current playback */}
             <div className="flex flex-col items-center gap-0.5">
-              <span className="text-[9px] text-zinc-600 uppercase tracking-widest">الموضع</span>
+              <span className="text-[9px] text-zinc-600 uppercase tracking-widest">{t('dl_cut_position')}</span>
               <span className="font-mono text-xs text-zinc-400">{fmt(currentSec)}</span>
             </div>
 
             {/* End time */}
             <div className="flex flex-col items-center gap-0.5">
-              <span className="text-[9px] text-zinc-600 uppercase tracking-widest">نهاية</span>
+              <span className="text-[9px] text-zinc-600 uppercase tracking-widest">{t('dl_cut_end')}</span>
               <span className="font-mono text-xs text-ocean-400 font-bold">{fmt(endSec)}</span>
             </div>
           </div>
@@ -453,14 +455,14 @@ const CutModal = ({ item, onClose, onToast }: CutModalProps) => {
         {/* Actions */}
         <div className="flex items-center justify-between px-6 py-4 border-t border-white/[0.07]">
           <p className="text-[11px] text-zinc-600">
-            {duration > 0 ? `المدة الكاملة: ${fmt(duration)}` : "جاري تحميل الملف..."}
+            {duration > 0 ? t('dl_cut_full_dur', { dur: fmt(duration) }) : t('dl_cut_loading')}
           </p>
           <div className="flex gap-3">
             <button
               onClick={onClose}
               className="px-5 py-2.5 rounded-xl bg-zinc-900 border border-white/10 text-zinc-400 hover:text-white text-xs font-bold transition cursor-pointer"
             >
-              إلغاء
+              {t('dl_cancel')}
             </button>
             <button
               onClick={handleCut}
@@ -469,8 +471,8 @@ const CutModal = ({ item, onClose, onToast }: CutModalProps) => {
               style={{ boxShadow: "0 0 18px rgba(108,128,137,0.35)" }}
             >
               {cutting
-                ? <><Loader2 className="h-3.5 w-3.5 animate-spin" /> جاري القص...</>
-                : <><Scissors className="h-3.5 w-3.5" /> تأكيد القص</>}
+                ? <><Loader2 className="h-3.5 w-3.5 animate-spin" /> {t('dl_cutting')}</>
+                : <><Scissors className="h-3.5 w-3.5" /> {t('dl_cut_confirm')}</>}
             </button>
           </div>
         </div>
@@ -494,6 +496,7 @@ interface TrimSliderInlineProps {
 const TrimSliderInline = memo(({
   duration, startSec, endSec, trimStart, trimEnd, onStartChange, onEndChange
 }: TrimSliderInlineProps) => {
+  const { t } = useLanguage();
   const trackRef = useRef<HTMLDivElement>(null);
   const startRef = useRef(startSec);
   const endRef = useRef(endSec);
@@ -580,15 +583,15 @@ const TrimSliderInline = memo(({
       {/* Time info */}
       <div className="flex justify-between px-1">
         <div className="flex flex-col items-center gap-0.5">
-          <span className="text-[9px] uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>بداية</span>
+          <span className="text-[9px] uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>{t('dl_cut_start')}</span>
           <span className="text-[11px] font-mono font-bold" style={{ color: "var(--text-secondary)" }}>{trimStart}</span>
         </div>
         <div className="flex flex-col items-center gap-0.5">
-          <span className="text-[9px] uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>المقطع</span>
+          <span className="text-[9px] uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>{t('dl_trim_duration')}</span>
           <span className="text-[11px] font-mono font-bold text-white">{fmt(trimDuration)}</span>
         </div>
         <div className="flex flex-col items-center gap-0.5">
-          <span className="text-[9px] uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>نهاية</span>
+          <span className="text-[9px] uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>{t('dl_cut_end')}</span>
           <span className="text-[11px] font-mono font-bold" style={{ color: "var(--text-secondary)" }}>{trimEnd}</span>
         </div>
       </div>
@@ -603,6 +606,7 @@ interface DownloaderTabProps {
 }
 
 export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
+  const { t } = useLanguage();
   const [url, setUrl] = useState("");
   const [format, setFormat] = useState("mp4");
   const [quality, setQuality] = useState("");
@@ -692,7 +696,7 @@ export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
         const active = activeDownloadRef.current;
         if (!active) return;
 
-        showToast(`✅ تم تحميل: "${active.title}"`, "success");
+        showToast(`${t('dl_success_prefix')} "${active.title}"`, "success");
 
         const filePath = active.outputPath ||
           `${active.title}.${active.format}`;
@@ -718,7 +722,7 @@ export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
       const u3 = await listen<string>("dl-error", e => {
         const active = activeDownloadRef.current;
         if (!active) return;
-        showToast(`❌ فشل التحميل: ${e.payload}`, "error");
+        showToast(`${t('dl_fail_prefix')} ${e.payload}`, "error");
         setQueue(prev =>
           prev.map(i =>
             i.id === active.id
@@ -763,7 +767,7 @@ export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
           cookies_from: next.cookiesFrom || "",
         },
       }).catch(err => {
-        showToast(`خطأ: ${err}`, "error");
+        showToast(`${t('dl_error_prefix')} ${err}`, "error");
         setQueue(prev =>
           prev.map(i => i.id === next.id ? { ...i, status: "failed" } : i)
         );
@@ -801,7 +805,7 @@ export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
         localStorage.setItem("dl_output_dir", dir);
       }
     } catch (err: any) {
-      showToast(`خطأ في اختيار المجلد: ${err}`, "error");
+      showToast(`${t('dl_dir_error')} ${err}`, "error");
     }
   };
 
@@ -840,7 +844,7 @@ export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
           showToast(`📋 "${result.title}"`, "success");
         }
       } catch (err: any) {
-        setProbeError(`فشل جلب معلومات الرابط — ${err}`);
+        setProbeError(`${t('dl_probe_fail')} ${err}`);
       } finally {
         setProbing(false);
       }
@@ -862,7 +866,7 @@ export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
   const handleStartDownload = async () => {
     if (!metadata || !quality || downloading) return;
     if (!outputDir) {
-      showToast("يرجى اختيار مجلد الحفظ أولاً", "error");
+      showToast(t('dl_req_dir'), "error");
       return;
     }
 
@@ -895,7 +899,7 @@ export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
   };
 
   const handleCancelDownload = async () => {
-    try { await invoke("cancel_download"); showToast("تم إلغاء التحميل", "info"); }
+    try { await invoke("cancel_download"); showToast(t('dl_cancel_msg'), "info"); }
     catch { }
   };
 
@@ -931,7 +935,7 @@ export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
           <div />
           <div className="text-right">
             <h1 className="text-2xl font-bold flex items-center gap-3 justify-end text-[var(--text-primary)]">
-              أداة التحميل والقص
+              {t('dl_title')}
               <div className="p-2 rounded-xl bg-[var(--bg-panel)] border border-[var(--border-color)]">
                 <Download className="h-6 w-6 text-[var(--accent-primary)]" />
               </div>
@@ -954,7 +958,7 @@ export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
 
           {/* ── Section: URL Input ─────────────────────────────────── */}
           <div className="p-3.5 flex flex-col gap-2">
-            <p className="text-[11px] font-semibold tracking-widest uppercase text-right" style={{ color: "var(--text-muted)" }} dir="rtl">رابط المحتوى</p>
+            <p className="text-[11px] font-semibold tracking-widest uppercase text-right" style={{ color: "var(--text-muted)" }} dir="rtl">{t('dl_url_label')}</p>
 
             {/* URL input */}
             <div className="relative">
@@ -963,7 +967,7 @@ export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
                 value={url}
                 onChange={e => handleUrlChange(e.target.value)}
                 onPaste={e => setTimeout(() => handleUrlChange(e.currentTarget.value), 30)}
-                placeholder="الصق رابط الفيديو أو الصوت هنا..."
+                placeholder={t('dl_url_placeholder')}
                 dir="rtl"
                 className="w-full rounded-xl px-4 py-3 pr-11 text-white text-right text-sm placeholder-zinc-600 focus:outline-none transition-colors"
                 style={{ background: "var(--bg-input)", border: "1px solid var(--border-color)" }}
@@ -1023,25 +1027,25 @@ export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
 
           {/* ── Section: Format / Quality / Cookies ─────────────────── */}
           <div className="p-3.5 flex flex-col gap-2.5">
-            <p className="text-[11px] font-semibold tracking-widest uppercase text-right" style={{ color: "var(--text-muted)" }} dir="rtl">إعدادات التحميل</p>
+            <p className="text-[11px] font-semibold tracking-widest uppercase text-right" style={{ color: "var(--text-muted)" }} dir="rtl">{t('dl_settings')}</p>
 
             <div className="grid grid-cols-3 gap-3">
               {[
                 {
-                  label: "التنسيق", value: format, onChange: handleFormatChange,
-                  options: [{ v: "mp4", l: "🎬 MP4 (فيديو)" }, { v: "mp3", l: "🎵 MP3 (صوت)" }]
+                  label: t('dl_format'), value: format, onChange: handleFormatChange,
+                  options: [{ v: "mp4", l: t('dl_fmt_video') }, { v: "mp3", l: t('dl_fmt_audio') }]
                 },
                 {
-                  label: "الجودة", value: quality, onChange: setQuality,
+                  label: t('dl_quality'), value: quality, onChange: setQuality,
                   options: qualityOptions.length
                     ? qualityOptions.map(q => ({ v: q.id, l: q.label }))
-                    : [{ v: "", l: "أدخل رابطاً" }],
+                    : [{ v: "", l: t('dl_qual_empty') }],
                   disabled: qualityOptions.length === 0
                 },
                 {
-                  label: "المتصفح للكوكيز", value: cookiesFrom, onChange: setCookiesFrom,
+                  label: t('dl_cookies'), value: cookiesFrom, onChange: setCookiesFrom,
                   options: [
-                    { v: "", l: "بدون" },
+                    { v: "", l: t('dl_cookies_none') },
                     { v: "chrome", l: "Chrome" },
                     { v: "edge", l: "Edge" },
                     { v: "firefox", l: "Firefox" },
@@ -1096,7 +1100,7 @@ export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
                 }} />
               </div>
               <span className="text-sm" style={{ color: trimEnabled ? "var(--text-primary)" : "var(--text-muted)" }}>
-                تفعيل القص قبل التحميل
+                {t('dl_enable_trim')}
               </span>
             </label>
 
@@ -1113,8 +1117,8 @@ export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
             ) : trimEnabled ? (
               <div className="grid grid-cols-2 gap-3" dir="rtl">
                 {[
-                  { label: "وقت البداية", value: trimStart, onChange: setTrimStart, placeholder: "00:00:00" },
-                  { label: "وقت الانتهاء", value: trimEnd, onChange: setTrimEnd, placeholder: "00:01:30" },
+                  { label: t('dl_trim_start'), value: trimStart, onChange: setTrimStart, placeholder: "00:00:00" },
+                  { label: t('dl_trim_end'), value: trimEnd, onChange: setTrimEnd, placeholder: "00:01:30" },
                 ].map(({ label, value, onChange, placeholder }) => (
                   <div key={label} className="flex flex-col gap-1.5">
                     <label className="text-[10px] font-semibold" style={{ color: "var(--text-secondary)" }}>{label}</label>
@@ -1137,7 +1141,7 @@ export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
 
           {/* ── Section: Output Folder + Download Button ─────────────── */}
           <div className="px-5 py-4 flex flex-col gap-3">
-            <p className="text-[11px] font-semibold tracking-widest uppercase text-right" style={{ color: "var(--text-muted)" }} dir="rtl">مجلد الحفظ</p>
+            <p className="text-[11px] font-semibold tracking-widest uppercase text-right" style={{ color: "var(--text-muted)" }} dir="rtl">{t('dl_save_dir')}</p>
 
             {/* Folder bar */}
             <button
@@ -1151,10 +1155,10 @@ export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
               <Folder className="h-4 w-4 flex-shrink-0" style={{ color: outputDir ? "#38bdf8" : "#3a4a50" }} />
               <span className="flex-1 truncate text-right text-xs" dir="rtl"
                 style={{ color: outputDir ? "#8ba2ad" : "#3a4a50" }}>
-                {outputDir || "اضغط لاختيار مجلد الحفظ الافتراضي..."}
+                {outputDir || t('dl_select_dir')}
               </span>
               {outputDir && (
-                <span className="text-[10px] flex-shrink-0" style={{ color: "var(--text-muted)" }}>تغيير</span>
+                <span className="text-[10px] flex-shrink-0" style={{ color: "var(--text-muted)" }}>{t('dl_change')}</span>
               )}
             </button>
 
@@ -1176,8 +1180,8 @@ export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
               }}
             >
               {downloading
-                ? <><Loader2 className="h-4 w-4 animate-spin" /> جاري التحميل...</>
-                : <><Download className="h-4 w-4" /> بدء التحميل</>}
+                ? <><Loader2 className="h-4 w-4 animate-spin" /> {t('dl_downloading')}</>
+                : <><Download className="h-4 w-4" /> {t('dl_start_dl')}</>}
             </button>
           </div>
         </div>
@@ -1189,8 +1193,8 @@ export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
         {/* Tabs */}
         <div className="flex items-center border-b border-[var(--border-color)]">
           {([
-            { id: "queue", icon: List, label: "القائمة", count: activeCount },
-            { id: "history", icon: History, label: "السجل" },
+            { id: "queue", icon: List, label: t('dl_tab_queue'), count: activeCount },
+            { id: "history", icon: History, label: t('dl_tab_history') },
           ] as const).map(tab => (
             <button
               key={tab.id}
@@ -1220,7 +1224,7 @@ export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
               className="px-3 py-3.5 text-[10px] font-bold transition cursor-pointer flex-shrink-0"
               style={{ color: historySelectMode ? "#c07070" : "#4a6068" }}
             >
-              {historySelectMode ? "إلغاء" : "تحديد"}
+              {historySelectMode ? t('dl_cancel_select') : t('dl_select')}
             </button>
           )}
         </div>
@@ -1241,13 +1245,13 @@ export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
                     color: "#e07070",
                   }}
                 >
-                  <Square className="h-3 w-3" /> إيقاف التحميل الحالي
+                  <Square className="h-3 w-3" /> {t('dl_stop_current')}
                 </button>
               )}
               {queue.length === 0 ? (
                 <div className="flex-1 flex flex-col items-center justify-center py-16" style={{ color: "var(--text-muted)" }}>
                   <Download className="h-9 w-9 mb-3 opacity-30" />
-                  <p className="text-xs">القائمة فارغة</p>
+                  <p className="text-xs">{t('dl_queue_empty')}</p>
                 </div>
               ) : queue.map(item => (
                 <div key={item.id} className="rounded-xl p-3"
@@ -1293,9 +1297,9 @@ export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
                         : "#3a4a50"
                     }}>
                       {item.status === "downloading" ? `${Math.round(item.progress)}% • ${item.speed}`
-                        : item.status === "done" ? "✓ مكتمل"
-                        : item.status === "failed" ? "✗ فشل"
-                        : "في الانتظار"}
+                        : item.status === "done" ? t('dl_status_done')
+                        : item.status === "failed" ? t('dl_status_fail')
+                        : t('dl_status_pending')}
                     </span>
                     {item.status === "downloading" && item.eta !== "--" && (
                       <span className="font-mono" style={{ color: "var(--text-muted)" }}>ETA {item.eta}</span>
@@ -1312,7 +1316,7 @@ export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
               {history.length === 0 ? (
                 <div className="flex-1 flex flex-col items-center justify-center py-16" style={{ color: "var(--text-muted)" }}>
                   <History className="h-9 w-9 mb-3 opacity-30" />
-                  <p className="text-xs">لا يوجد سجل بعد</p>
+                  <p className="text-xs">{t('dl_history_empty')}</p>
                 </div>
               ) : (
                 <>
@@ -1347,7 +1351,7 @@ export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
                           </svg>
                         )}
                       </div>
-                      تحديد الكل ({history.length})
+                      {t('dl_select_all', { count: history.length })}
                     </button>
                   )}
 
@@ -1420,7 +1424,7 @@ export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
                             (e.currentTarget as HTMLElement).style.color = "#4a6068";
                           }}
                         >
-                          <Scissors className="h-3 w-3" /> قص الملف
+                          <Scissors className="h-3 w-3" /> {t('dl_cut_file')}
                         </button>
                       )}
                     </div>
@@ -1438,7 +1442,7 @@ export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
                         boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
                       }}
                     >
-                      <X className="h-3.5 w-3.5" /> حذف المحدد ({selectedHistoryIndices.size})
+                      <X className="h-3.5 w-3.5" /> {t('dl_delete_selected', { count: selectedHistoryIndices.size })}
                     </button>
                   )}
                 </>
@@ -1457,9 +1461,9 @@ export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
                 <X className="h-5 w-5" />
               </button>
               <div className="text-right">
-                <h3 className="text-sm font-bold text-white">قائمة تشغيل</h3>
+                <h3 className="text-sm font-bold text-white">{t('dl_playlist')}</h3>
                 <p className="text-xs text-zinc-500 mt-0.5">
-                  {playlistModal.entries?.length} فيديو — "{playlistModal.title}"
+                  {t('dl_playlist_videos', { count: playlistModal.entries?.length || 0, title: playlistModal.title })}
                 </p>
               </div>
             </div>
@@ -1478,7 +1482,7 @@ export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
                 onClick={() => { setPlaylistModal(null); setUrl(""); }}
                 className="px-4 py-2 rounded-lg bg-zinc-900 border border-white/10 text-zinc-400 hover:text-white text-xs font-bold cursor-pointer"
               >
-                إلغاء
+                {t('dl_cancel')}
               </button>
               <button
                 onClick={async () => {
@@ -1490,12 +1494,12 @@ export const DownloaderTab = ({ onDownloadComplete }: DownloaderTabProps) => {
                       outputPath: null, startTime: null, endTime: null, cookiesFrom,
                     });
                   }
-                  showToast(`تمت إضافة ${playlistModal.entries?.length} مقطع`, "success");
+                  showToast(t('dl_added_count', { count: playlistModal.entries?.length || 0 }), "success");
                   setPlaylistModal(null); setUrl("");
                 }}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-ocean-500 text-black text-xs font-extrabold cursor-pointer hover:bg-ocean-400"
               >
-                <Download className="h-3.5 w-3.5" /> إضافة الكل
+                <Download className="h-3.5 w-3.5" /> {t('dl_add_all')}
               </button>
             </div>
           </div>

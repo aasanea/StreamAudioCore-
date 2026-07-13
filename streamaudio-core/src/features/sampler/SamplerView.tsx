@@ -6,6 +6,7 @@ import { Config, SoundEntry, PadEntry } from '../../types';
 import { GlassPanel } from '../../components/ui/GlassPanel';
 import { IconButton } from '../../components/ui/IconButton';
 import { Typography } from '../../components/ui/Typography';
+import { useLanguage } from '../../i18n';
 
 export interface PaginationState {
   page: number;
@@ -149,6 +150,7 @@ export const SamplerView: React.FC<SamplerViewProps> = React.memo(({
   WaveformCanvas
 }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const { t } = useLanguage();
   const {
     page: samplerPage,
     numPages,
@@ -177,7 +179,7 @@ export const SamplerView: React.FC<SamplerViewProps> = React.memo(({
         <div className="w-full flex justify-between items-center text-right" dir="rtl">
           <div className="flex flex-col flex-shrink-0">
             <Typography variant="subtitle" color="accent" className="flex items-center gap-2">
-              التحكم السريع بالاختصارات 
+              {t('sampler_title')} 
               <span dir="ltr" className="text-[10px] text-ocean-500 font-mono tracking-widest bg-ocean-500/10 px-1.5 py-0.5 rounded border border-ocean-500/20">LIVE MODE</span>
             </Typography>
           </div>
@@ -196,7 +198,7 @@ export const SamplerView: React.FC<SamplerViewProps> = React.memo(({
               variant="ghost"
               size="sm"
               onClick={() => scrollContainerRef.current?.scrollBy({ left: -100, behavior: "smooth" })}
-              title="التمرير لليمين"
+              title={t('sampler_scroll_right')}
               className="hover:text-ocean-400 hover:bg-ocean-400/10"
             />
 
@@ -214,7 +216,7 @@ export const SamplerView: React.FC<SamplerViewProps> = React.memo(({
               >
                 {pagesArray.map((pageIndex) => {
                   const isPageActive = samplerPage === pageIndex;
-                  const pageName = config.sampler_grid.page_names?.[pageIndex] || `الصفحة ${pageIndex + 1}`;
+                  const pageName = config.sampler_grid.page_names?.[pageIndex] || t('sampler_page_default', { page: pageIndex + 1 });
                   return (
                     <div key={pageIndex} className="flex-shrink-0">
                       {editingPageIdx === pageIndex ? (
@@ -250,7 +252,7 @@ export const SamplerView: React.FC<SamplerViewProps> = React.memo(({
                               ? "bg-ocean-500/20 text-ocean-300 border-ocean-400/50 shadow-[0_0_15px_rgba(34,211,238,0.2)]"
                               : "bg-white/5 border-white/5 text-zinc-400 hover:text-zinc-200 hover:bg-white/10 hover:border-white/10"
                           } cursor-pointer`}
-                          title="انقر لتصفح الصفحة، أو انقر نقراً مزدوجاً لتعديل اسمها"
+                          title={t('sampler_page_edit_tooltip')}
                         >
                           {pageName}
                         </button>
@@ -267,7 +269,7 @@ export const SamplerView: React.FC<SamplerViewProps> = React.memo(({
               variant="ghost"
               size="sm"
               onClick={() => scrollContainerRef.current?.scrollBy({ left: 100, behavior: "smooth" })}
-              title="التمرير لليسار"
+              title={t('sampler_scroll_left')}
               className="mr-1 hover:text-ocean-400 hover:bg-ocean-400/10"
             />
             
@@ -279,7 +281,7 @@ export const SamplerView: React.FC<SamplerViewProps> = React.memo(({
                 variant="secondary"
                 size="sm"
                 onClick={handleAddSamplerPage}
-                title="إضافة صفحة جديدة"
+                title={t('sampler_add_page')}
               />
               {/* Delete active page button */}
               {numPages > 4 && (
@@ -288,7 +290,7 @@ export const SamplerView: React.FC<SamplerViewProps> = React.memo(({
                   variant="danger"
                   size="sm"
                   onClick={() => handleRemoveSamplerPage(samplerPage)}
-                  title="حذف الصفحة الحالية"
+                  title={t('sampler_delete_page')}
                 />
               )}
             </div>
@@ -408,7 +410,7 @@ export const SamplerView: React.FC<SamplerViewProps> = React.memo(({
                                 padInteractions.onRemove(idx);
                               }}
                               className="text-zinc-400 hover:text-red-400 transition cursor-pointer"
-                              title="إزالة الصوت"
+                              title={t('sampler_remove_sound')}
                             >
                               <Trash2 className="h-3.5 w-3.5" />
                             </button>

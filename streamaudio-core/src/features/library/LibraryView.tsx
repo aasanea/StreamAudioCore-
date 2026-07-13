@@ -7,6 +7,7 @@ import { Button } from "../../components/ui/Button";
 import { IconButton } from "../../components/ui/IconButton";
 import { Typography } from "../../components/ui/Typography";
 import { Tooltip } from "../../components/ui/Tooltip";
+import { useLanguage } from "../../i18n";
 
 export interface LibraryViewProps {
   isDraggingFile: boolean;
@@ -87,6 +88,8 @@ export const LibraryView: React.FC<LibraryViewProps> = React.memo(({
   WaveformCanvas,
   ChannelStrip
 }) => {
+  const { t } = useLanguage();
+
   return (
     <motion.div 
       key="library"
@@ -110,18 +113,18 @@ export const LibraryView: React.FC<LibraryViewProps> = React.memo(({
             {isDraggingFile && (
               <div className="absolute inset-0 bg-brand-900/80 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center border-2 border-dashed border-brand-700 z-50 pointer-events-none">
                 <Upload className="h-12 w-12 text-brand-700 animate-bounce mb-3" />
-                <Typography variant="h3" color="accent">اسحب وأفلت ملف الصوت هنا للاستيراد السريع</Typography>
+                <Typography variant="h3" color="accent">{t('lib_drag_drop')}</Typography>
               </div>
             )}
 
-            <Typography variant="h2" color="primary" className="mb-8">إضافة مؤثر صوتي جديد</Typography>
+            <Typography variant="h2" color="primary" className="mb-8">{t('lib_add_new')}</Typography>
             
             <div className="flex flex-col gap-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="md:col-span-2">
                   <input 
                     type="text" 
-                    placeholder="اسم المؤثر الصوتي" 
+                    placeholder={t('lib_name_placeholder')}
                     value={newSoundName}
                     onChange={(e) => setNewSoundName(e.target.value)}
                     className="w-full bg-brand-500/20 border border-brand-500/30 hover:border-brand-500/50 focus:border-brand-700/50 focus:bg-brand-500/30 rounded-xl px-5 py-3.5 text-right text-brand-100 outline-none transition-all duration-200" 
@@ -131,25 +134,25 @@ export const LibraryView: React.FC<LibraryViewProps> = React.memo(({
                 
                 <div 
                   className="flex gap-2 items-center bg-brand-500/20 border border-dashed border-brand-500/30 hover:border-brand-700/50 rounded-xl px-2 py-1.5 focus-within:border-brand-700/50 focus-within:bg-white/10 transition-all duration-200 cursor-text group h-[52px]"
-                  title="اسحب وأفلت ملف الصوت هنا أو انقر على زر المجلد للتصفح"
+                  title={t('lib_browse_title')}
                 >
                   <IconButton
                     icon={<Folder size={18} />}
                     variant="ghost"
                     onClick={handleBrowseFile}
-                    title="تصفح الملفات"
+                    title={t('lib_browse')}
                   />
                   {newSoundPath && (
                     <IconButton
                       icon={isPreviewPlaying ? <Square size={16} className="fill-red-400/20" /> : <Play size={16} className="fill-brand-700/20" />}
                       variant={isPreviewPlaying ? "danger" : "ghost"}
                       onClick={handleTogglePreview}
-                      title={isPreviewPlaying ? "إيقاف المعاينة" : "استماع للمعاينة"}
+                      title={isPreviewPlaying ? t('lib_stop_preview') : t('lib_play_preview')}
                     />
                   )}
                   <input 
                     type="text" 
-                    placeholder="انقر لتصفح جهازك أو ألصق المسار هنا..." 
+                    placeholder={t('lib_path_placeholder')} 
                     value={newSoundPath}
                     onChange={(e) => setNewSoundPath(e.target.value)}
                     className="flex-1 min-w-0 bg-transparent text-right text-brand-100 focus:outline-none py-2 px-2 text-sm" 
@@ -160,7 +163,7 @@ export const LibraryView: React.FC<LibraryViewProps> = React.memo(({
                 <div className="h-[52px]">
                   <input 
                     type="text" 
-                    placeholder="الأوسمة (مفصولة بمسافة)" 
+                    placeholder={t('lib_tags_placeholder')} 
                     value={newSoundTags}
                     onChange={(e) => setNewSoundTags(e.target.value)}
                     className="w-full h-full bg-brand-500/20 border border-brand-500/30 hover:border-brand-500/50 focus:border-brand-700/50 focus:bg-brand-500/30 rounded-xl px-5 py-3 text-right text-brand-100 outline-none transition-all duration-200" 
@@ -171,7 +174,7 @@ export const LibraryView: React.FC<LibraryViewProps> = React.memo(({
               
               <div className="flex justify-start mt-2">
                 <Button variant="primary" onClick={handleAddSound} className="px-10">
-                  إضافة الصوت للمكتبة
+                  {t('lib_add_button')}
                 </Button>
               </div>
             </div>
@@ -248,12 +251,12 @@ export const LibraryView: React.FC<LibraryViewProps> = React.memo(({
                         <button
                           onClick={() => copyToClipboard(sound.code)}
                           className="flex items-center gap-2 rounded-lg bg-brand-500/20 border border-brand-500/30 px-3 py-1.5 text-xs font-mono text-zinc-300 hover:bg-white/10 hover:text-brand-100 transition-all duration-200"
-                          title="نسخ كود التشغيل"
+                          title={t('lib_copy_code')}
                         >
                           {copiedCode === sound.code ? <Check size={14} className="text-green-400" /> : <Copy size={14} className="text-brand-700" />}
                           {sound.code}
                         </button>
-                        <Tooltip content="تعديل البيانات" position="top">
+                        <Tooltip content={t('lib_edit_data')} position="top">
                           <IconButton
                             icon={<Pencil size={14} />}
                             variant="ghost"
@@ -303,7 +306,7 @@ export const LibraryView: React.FC<LibraryViewProps> = React.memo(({
 
                   {/* Actions */}
                   <div className="flex flex-row-reverse items-center justify-between gap-3 mt-4 relative z-10 pt-4 border-t border-white/5 group">
-                    <Tooltip content="حذف الصوت" position="top">
+                    <Tooltip content={t('lib_delete_sound')} position="top">
                       <IconButton
                         icon={<Trash2 size={16} />}
                         variant="danger"
@@ -312,7 +315,7 @@ export const LibraryView: React.FC<LibraryViewProps> = React.memo(({
                       />
                     </Tooltip>
 
-                    <Tooltip content="إضافة للوحة الاختصارات" position="top">
+                    <Tooltip content={t('lib_add_to_pad')} position="top">
                       <IconButton
                         icon={<Grid size={16} />}
                         variant="ghost"
@@ -321,7 +324,7 @@ export const LibraryView: React.FC<LibraryViewProps> = React.memo(({
                       />
                     </Tooltip>
 
-                    <Tooltip content={isPlaying ? "إيقاف" : "تشغيل"} position="top">
+                    <Tooltip content={isPlaying ? t('lib_stop') : t('lib_play')} position="top">
                       <button
                         onClick={() => isPlaying ? stopSound(sound.id) : playSound(sound.id, sound.output_device)}
                         className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-200 active:scale-95 shadow-md ${
@@ -346,8 +349,8 @@ export const LibraryView: React.FC<LibraryViewProps> = React.memo(({
           <div className="w-24 h-24 mb-6 rounded-full bg-brand-500/20 flex items-center justify-center">
             <Folder size={40} className="text-zinc-600" />
           </div>
-          <Typography variant="h3" color="muted">المكتبة فارغة أو لا يوجد نتائج</Typography>
-          <Typography variant="caption" color="muted" className="mt-2 max-w-sm">قم بسحب وإفلات ملفات صوتية هنا أو استخدم نموذج الإضافة بالأعلى</Typography>
+          <Typography variant="h3" color="muted">{t('lib_empty_title')}</Typography>
+          <Typography variant="caption" color="muted" className="mt-2 max-w-sm">{t('lib_empty_desc')}</Typography>
         </div>
       )}
     </motion.div>

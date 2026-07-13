@@ -5,6 +5,8 @@ import { IconButton } from "../ui/IconButton";
 import { Logo } from "../ui/Logo";
 import { AnimatedWaveBg } from "../ui/AnimatedWaveBg";
 import { Menu, ChevronLeft, Bell } from "lucide-react";
+import { useLanguage } from "../../i18n";
+import { LanguageToggle } from "../ui/LanguageToggle";
 
 interface TabItem {
   id: string;
@@ -29,8 +31,10 @@ export function AppLayout({
   setIsSidebarCollapsed,
   tabs
 }: AppLayoutProps) {
+  const { t, dir } = useLanguage();
+
   return (
-    <div className="h-screen w-full flex flex-col overflow-hidden font-cairo text-white select-none bg-brand-900">
+    <div className="h-screen w-full flex flex-col overflow-hidden font-cairo text-white select-none bg-brand-900" dir={dir}>
       <TitleBar activeTab={activeTab} />
       
       {/* Top Header */}
@@ -46,13 +50,15 @@ export function AppLayout({
         {/* Right Area: System Status & Notifications */}
         <div className="flex items-center gap-6 justify-end">
           
+          <LanguageToggle />
+
           {/* Notification Bell */}
           <div className="relative flex items-center justify-center">
             <IconButton
               icon={<Bell size={18} />}
               variant="ghost"
               className="text-brand-200 hover:text-white hover:bg-white/10"
-              title="الإشعارات"
+              title={t('layout_notifications')}
             />
             <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 border-2 border-brand-900 rounded-full animate-pulse"></span>
           </div>
@@ -78,7 +84,7 @@ export function AppLayout({
               variant="ghost"
               size="sm"
               onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-              title={isSidebarCollapsed ? "توسيع الشريط" : "طي الشريط"}
+              title={isSidebarCollapsed ? t('layout_expand') : t('layout_collapse')}
             />
           </div>
 

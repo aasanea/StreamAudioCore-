@@ -6,6 +6,7 @@ import {
   ArrowDownToLine, X, RefreshCw, Sparkles,
   CheckCircle2, AlertCircle, Loader2, FileText
 } from 'lucide-react';
+import { useLanguage } from '../../i18n';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -38,6 +39,7 @@ type UpdatePhase =
 // ─────────────────────────────────────────────────────────────────────────────
 
 const UpdateNotificationSystem: React.FC = () => {
+  const { t } = useLanguage();
   const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null);
   const [phase, setPhase] = useState<UpdatePhase>('idle');
   const [downloadProgress, setDownloadProgress] = useState(0);
@@ -151,7 +153,7 @@ const UpdateNotificationSystem: React.FC = () => {
                   <X size={15} />
                 </button>
                 <div className="flex items-center gap-2 flex-1 justify-end">
-                  <span className="text-sm font-bold text-white">إصدار جديد متاح!</span>
+                  <span className="text-sm font-bold text-white">{t('upd_new_available')}</span>
                   <div className="w-7 h-7 rounded-xl bg-amber-400/20 border border-amber-400/30 flex items-center justify-center flex-shrink-0">
                     <Sparkles size={14} className="text-amber-400" />
                   </div>
@@ -174,14 +176,14 @@ const UpdateNotificationSystem: React.FC = () => {
                   onClick={dismissToast}
                   className="flex-1 py-2 text-xs text-zinc-400 hover:text-zinc-200 rounded-xl border border-white/10 hover:border-white/20 transition-all"
                 >
-                  لاحقاً
+                  {t('upd_later')}
                 </button>
                 <button
                   onClick={openModal}
                   className="flex-1 py-2 text-xs font-bold text-black bg-amber-400 hover:bg-amber-300 rounded-xl transition-all shadow-[0_0_15px_rgba(245,158,11,0.3)] hover:shadow-[0_0_20px_rgba(245,158,11,0.5)] flex items-center justify-center gap-1.5"
                 >
                   <ArrowDownToLine size={13} />
-                  تحديث الآن
+                  {t('upd_now')}
                 </button>
               </div>
             </div>
@@ -230,7 +232,7 @@ const UpdateNotificationSystem: React.FC = () => {
                     )}
                     <div className="flex items-center gap-3 flex-1 justify-end">
                       <div>
-                        <h2 className="text-lg font-bold text-white">تحديث StreamAudio</h2>
+                        <h2 className="text-lg font-bold text-white">{t('upd_title')}</h2>
                         <p className="text-xs text-zinc-400 mt-0.5">
                           {updateInfo?.current_version} → <span className="text-amber-400 font-bold">{updateInfo?.latest_version}</span>
                         </p>
@@ -252,7 +254,7 @@ const UpdateNotificationSystem: React.FC = () => {
                         <div className="bg-white/5 border border-white/8 rounded-2xl p-4">
                           <div className="flex items-center gap-2 mb-3">
                             <FileText size={14} className="text-ocean-400" />
-                            <span className="text-xs font-bold text-zinc-300">ملاحظات الإصدار</span>
+                            <span className="text-xs font-bold text-zinc-300">{t('upd_release_notes')}</span>
                           </div>
                           <p className="text-sm text-zinc-300 leading-relaxed">
                             {updateInfo.release_notes}
@@ -260,7 +262,7 @@ const UpdateNotificationSystem: React.FC = () => {
                         </div>
                       )}
                       <div className="flex items-center justify-between text-xs text-zinc-500 bg-white/3 rounded-xl px-3 py-2">
-                        <span className="text-zinc-400">سيُعاد تشغيل التطبيق تلقائياً بعد التثبيت</span>
+                        <span className="text-zinc-400">{t('upd_restart_notice')}</span>
                         <RefreshCw size={12} className="text-zinc-500" />
                       </div>
                     </>
@@ -271,10 +273,10 @@ const UpdateNotificationSystem: React.FC = () => {
                     <div className="flex flex-col gap-4">
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-zinc-400 text-xs">
-                          {phase === 'installing' ? 'جاري التثبيت...' :
+                          {phase === 'installing' ? t('upd_installing') :
                             totalSize > 0
                               ? `${formatBytes(totalDownloaded)} / ${formatBytes(totalSize)}`
-                              : 'جاري التحميل...'
+                              : t('upd_downloading')
                           }
                         </span>
                         <span className="font-bold text-white text-sm">
@@ -304,8 +306,8 @@ const UpdateNotificationSystem: React.FC = () => {
 
                       <p className="text-xs text-center text-zinc-500">
                         {phase === 'installing'
-                          ? '⚡ لحظات وسيُعاد تشغيل التطبيق...'
-                          : '📦 لا تغلق التطبيق أثناء التحديث'
+                          ? t('upd_restart_soon')
+                          : t('upd_dont_close')
                         }
                       </p>
                     </div>
@@ -315,8 +317,8 @@ const UpdateNotificationSystem: React.FC = () => {
                   {phase === 'done' && (
                     <div className="flex flex-col items-center gap-3 py-4">
                       <CheckCircle2 size={48} className="text-green-400 drop-shadow-[0_0_15px_rgba(74,222,128,0.5)]" />
-                      <p className="text-white font-bold">اكتمل التحديث!</p>
-                      <p className="text-xs text-zinc-400">يُعاد تشغيل التطبيق الآن...</p>
+                      <p className="text-white font-bold">{t('upd_done')}</p>
+                      <p className="text-xs text-zinc-400">{t('upd_restarting')}</p>
                     </div>
                   )}
 
@@ -324,7 +326,7 @@ const UpdateNotificationSystem: React.FC = () => {
                   {phase === 'error' && (
                     <div className="flex flex-col items-center gap-3 py-4">
                       <AlertCircle size={40} className="text-red-400" />
-                      <p className="text-white font-bold">فشل التحديث</p>
+                      <p className="text-white font-bold">{t('upd_failed')}</p>
                       <p className="text-xs text-zinc-500 text-center leading-relaxed">{error}</p>
                     </div>
                   )}
@@ -336,7 +338,7 @@ const UpdateNotificationSystem: React.FC = () => {
                         onClick={closeModal}
                         className="flex-1 py-3 text-sm text-zinc-400 hover:text-zinc-200 rounded-xl border border-white/10 hover:border-white/20 transition-all"
                       >
-                        {phase === 'error' ? 'إغلاق' : 'لاحقاً'}
+                        {phase === 'error' ? t('upd_close') : t('upd_later')}
                       </button>
                       {phase === 'available' && (
                         <button
@@ -344,7 +346,7 @@ const UpdateNotificationSystem: React.FC = () => {
                           className="flex-1 py-3 text-sm font-bold text-black bg-amber-400 hover:bg-amber-300 rounded-xl transition-all shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_30px_rgba(245,158,11,0.5)] flex items-center justify-center gap-2"
                         >
                           <ArrowDownToLine size={16} />
-                          تحديث وإعادة التشغيل
+                          {t('upd_install_restart')}
                         </button>
                       )}
                     </div>
@@ -354,7 +356,7 @@ const UpdateNotificationSystem: React.FC = () => {
                   {isProcessing && (
                     <div className="flex items-center justify-center gap-2 text-xs text-zinc-500 pt-1">
                       <Loader2 size={13} className="animate-spin" />
-                      <span>يُرجى الانتظار...</span>
+                      <span>{t('upd_wait')}</span>
                     </div>
                   )}
                 </div>
