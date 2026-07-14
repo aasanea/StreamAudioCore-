@@ -4,7 +4,7 @@ import { TitleBar } from "../../components/TitleBar";
 import { IconButton } from "../ui/IconButton";
 import { Logo } from "../ui/Logo";
 import { AnimatedWaveBg } from "../ui/AnimatedWaveBg";
-import { Menu, ChevronLeft, Bell } from "lucide-react";
+import { Menu, ChevronLeft, ChevronRight, Bell } from "lucide-react";
 import { useLanguage } from "../../i18n";
 import { LanguageToggle } from "../ui/LanguageToggle";
 
@@ -75,12 +75,22 @@ export function AppLayout({
           initial={false}
           animate={{ width: isSidebarCollapsed ? 80 : 280 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="flex-shrink-0 h-full flex flex-col z-20 bg-[#090916] border-l border-[#312E81]/30 shadow-[-10px_0_30px_rgba(0,0,0,0.4)]"
+          className={`flex-shrink-0 h-full flex flex-col z-20 bg-[#090916] border-[#312E81]/30 ${
+            dir === "rtl"
+              ? "border-l shadow-[-10px_0_30px_-15px_rgba(0,0,0,0.3)]"
+              : "border-r shadow-[10px_0_30px_-15px_rgba(0,0,0,0.3)]"
+          }`}
         >
           {/* Collapse Toggle */}
           <div className={`flex items-center px-5 pt-4 ${isSidebarCollapsed ? "justify-center" : "justify-end"}`}>
             <IconButton 
-              icon={isSidebarCollapsed ? <Menu size={18} /> : <ChevronLeft size={18} />}
+              icon={
+                isSidebarCollapsed
+                  ? <Menu size={18} />
+                  : dir === "rtl"
+                  ? <ChevronRight size={18} />
+                  : <ChevronLeft size={18} />
+              }
               variant="ghost"
               size="sm"
               onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
@@ -115,7 +125,7 @@ export function AppLayout({
                   )}
                   <Icon size={22} className={isActive ? "text-[#0F0F23]" : "text-brand-300"} strokeWidth={isActive ? 2.5 : 2} />
                   {!isSidebarCollapsed && (
-                    <span className="flex-1 font-bold whitespace-nowrap overflow-hidden text-right">
+                    <span className="flex-1 font-bold whitespace-nowrap overflow-hidden ltr:text-left rtl:text-right">
                       {tab.label}
                     </span>
                   )}
