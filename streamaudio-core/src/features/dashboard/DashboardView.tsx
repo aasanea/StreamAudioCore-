@@ -17,56 +17,137 @@ const cleanDeviceName = (name: string): string => {
     .trim();
 };
 
-// Extremely performant VU Meter component using raw DOM manipulation to bypass React render cycle
+// Professional Studio Stereo VU Meter component using raw DOM manipulation to bypass React render cycle
 const VUMeter: React.FC<{ isActive: boolean; gain: number }> = React.memo(({ isActive, gain }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const leftBarRef = useRef<HTMLDivElement>(null);
+  const rightBarRef = useRef<HTMLDivElement>(null);
+  const leftPeakRef = useRef<HTMLDivElement>(null);
+  const rightPeakRef = useRef<HTMLDivElement>(null);
+  const leftValRef = useRef<HTMLSpanElement>(null);
+  const rightValRef = useRef<HTMLSpanElement>(null);
   const animationRef = useRef<number | null>(null);
 
+  // Peak hold references (fraction 0-1)
+  const peaks = useRef({ left: 0.0, right: 0.0 });
+  const holdFrames = useRef({ left: 0, right: 0 });
+  
   useEffect(() => {
-    if (!isActive || !containerRef.current) {
-      // Clear level if inactive
-      if (containerRef.current) {
-        const bars = containerRef.current.children;
-        for (let i = 0; i < bars.length; i++) {
-          (bars[i] as HTMLDivElement).style.transform = "scaleY(0.08)";
-          (bars[i] as HTMLDivElement).style.backgroundColor = "rgba(128, 170, 160, 0.2)";
-        }
+    if (!isActive) {
+      // Clear levels on standby
+      if (leftBarRef.current) leftBarRef.current.style.transform = "scaleX(0)";
+      if (rightBarRef.current) rightBarRef.current.style.transform = "scaleX(0)";
+      if (leftPeakRef.current) leftPeakRef.current.style.left = "0%";
+      if (rightPeakRef.current) rightPeakRef.current.style.left = "0%";
+      if (leftValRef.current) {
+        leftValRef.current.textContent = "-∞ dB";
+        leftValRef.current.className = "text-brand-300 text-[10px] font-mono w-16 text-right";
+      }
+      if (rightValRef.current) {
+        rightValRef.current.textContent = "-∞ dB";
+        rightValRef.current.className = "text-brand-300 text-[10px] font-mono w-16 text-right";
       }
       return;
     }
 
-    const bars = containerRef.current.children;
-    const numBars = bars.length;
     let phase = 0;
+    const HOLD_DURATION = 75; // ~1.25 seconds at 60fps
+    const DECAY_RATE = 0.012; // decay per frame
+    
+    // Track values for smoothed random walks
+    let lTarget = 0.5;
+    let rTarget = 0.5;
+    let lCurrent = 0.02;
+    let rCurrent = 0.02;
+
+    const getFraction = (val: number) => {
+      if (val <= 0.001) return 0;
+      const db = 20 * Math.log10(val);
+      const fraction = (db - (-60)) / 60;
+      return Math.max(0, Math.min(1, fraction));
+    };
 
     const updateMeter = () => {
-      phase += 0.15;
-      
-      for (let i = 0; i < numBars; i++) {
-        // Calculate simulated sound level using multiple sine waves and noise
-        const baseOffset = (i / numBars) * Math.PI;
-        const sineVal = Math.sin(phase + baseOffset) * 0.4 + 0.5;
-        const noiseVal = Math.random() * 0.2;
-        
-        // Scale by gain (normalized from 0-100 to 0.2-2.0 multiplier)
-        const gainMultiplier = 0.2 + (gain / 100) * 1.8;
-        let level = (sineVal + noiseVal) * gainMultiplier * 0.85;
-        
-        // Clamp level
-        level = Math.max(0.05, Math.min(1.0, level));
+      phase += 0.06;
 
-        const bar = bars[i] as HTMLDivElement;
-        if (bar) {
-          bar.style.transform = `scaleY(${level})`;
-          
-          // Color coding for visualizer (green -> yellow -> red)
-          if (level > 0.85) {
-            bar.style.backgroundColor = "#ef4444"; // Clip warning
-          } else if (level > 0.65) {
-            bar.style.backgroundColor = "#eab308"; // High level
-          } else {
-            bar.style.backgroundColor = "#80AAA0"; // Healthy level (primary accent)
-          }
+      // Base input volume from gain setting
+      const maxLvl = Math.max(0.05, gain / 100);
+
+      // Correlation random walks to simulate realistic stereo music/voice bounce
+      const baseChange = (Math.random() - 0.5) * 0.18;
+      const lChange = baseChange + (Math.random() - 0.5) * 0.08;
+      const rChange = baseChange + (Math.random() - 0.5) * 0.08;
+
+      lTarget = Math.max(0.01, Math.min(maxLvl, lTarget + lChange));
+      rTarget = Math.max(0.01, Math.min(maxLvl, rTarget + rChange));
+
+      // Lerp for butter-smooth visual translation
+      lCurrent = lCurrent + (lTarget - lCurrent) * 0.25;
+      rCurrent = rCurrent + (rTarget - rCurrent) * 0.25;
+
+      const lFraction = getFraction(lCurrent);
+      const rFraction = getFraction(rCurrent);
+
+      // Update linear-in-dB bars
+      if (leftBarRef.current) leftBarRef.current.style.transform = `scaleX(${lFraction})`;
+      if (rightBarRef.current) rightBarRef.current.style.transform = `scaleX(${rFraction})`;
+
+      // Left peak hold calculation
+      if (lFraction >= peaks.current.left) {
+        peaks.current.left = lFraction;
+        holdFrames.current.left = HOLD_DURATION;
+      } else {
+        if (holdFrames.current.left > 0) {
+          holdFrames.current.left--;
+        } else {
+          peaks.current.left = Math.max(0, peaks.current.left - DECAY_RATE);
+        }
+      }
+
+      // Right peak hold calculation
+      if (rFraction >= peaks.current.right) {
+        peaks.current.right = rFraction;
+        holdFrames.current.right = HOLD_DURATION;
+      } else {
+        if (holdFrames.current.right > 0) {
+          holdFrames.current.right--;
+        } else {
+          peaks.current.right = Math.max(0, peaks.current.right - DECAY_RATE);
+        }
+      }
+
+      // Update Peak indicator positions
+      if (leftPeakRef.current) {
+        leftPeakRef.current.style.left = `${peaks.current.left * 99}%`;
+      }
+      if (rightPeakRef.current) {
+        rightPeakRef.current.style.left = `${peaks.current.right * 99}%`;
+      }
+
+      // Numerical dB calculation
+      const lDb = -60 + lFraction * 60;
+      const rDb = -60 + rFraction * 60;
+
+      // Update left text styles
+      if (leftValRef.current) {
+        leftValRef.current.textContent = lFraction <= 0.01 ? "-∞ dB" : `${lDb.toFixed(1)} dB`;
+        if (lDb > -0.5) {
+          leftValRef.current.className = "text-red-500 font-extrabold scale-110 transition-transform duration-100 animate-pulse text-[10px] font-mono w-16 text-right";
+        } else if (lDb > -6) {
+          leftValRef.current.className = "text-yellow-400 font-bold text-[10px] font-mono w-16 text-right";
+        } else {
+          leftValRef.current.className = "text-brand-300 text-[10px] font-mono w-16 text-right";
+        }
+      }
+
+      // Update right text styles
+      if (rightValRef.current) {
+        rightValRef.current.textContent = rFraction <= 0.01 ? "-∞ dB" : `${rDb.toFixed(1)} dB`;
+        if (rDb > -0.5) {
+          rightValRef.current.className = "text-red-500 font-extrabold scale-110 transition-transform duration-100 animate-pulse text-[10px] font-mono w-16 text-right";
+        } else if (rDb > -6) {
+          rightValRef.current.className = "text-yellow-400 font-bold text-[10px] font-mono w-16 text-right";
+        } else {
+          rightValRef.current.className = "text-brand-300 text-[10px] font-mono w-16 text-right";
         }
       }
 
@@ -83,27 +164,76 @@ const VUMeter: React.FC<{ isActive: boolean; gain: number }> = React.memo(({ isA
   }, [isActive, gain]);
 
   return (
-    <div className="flex flex-col gap-2 bg-black/20 p-4 rounded-xl border border-brand-500/10">
+    <div className="flex flex-col gap-3 bg-black/40 p-4 rounded-xl border border-brand-500/10 backdrop-blur-md shadow-lg">
+      {/* Header Info */}
       <div className="flex justify-between items-center text-[10px] text-brand-300 font-bold uppercase tracking-wider">
-        <span>Level Monitor</span>
-        <span className={isActive ? "text-[#80AAA0] animate-pulse" : "text-brand-300"}>
-          {isActive ? "Live" : "Standby"}
+        <span className="flex items-center gap-1.5">
+          <Sliders size={12} className="text-[#80AAA0]" />
+          Level Monitor (Stereo)
+        </span>
+        <span className={isActive ? "text-[#80AAA0] animate-pulse font-extrabold" : "text-brand-300"}>
+          {isActive ? "LIVE" : "STANDBY"}
         </span>
       </div>
-      <div 
-        ref={containerRef} 
-        className="flex items-end gap-1 h-14 w-full bg-black/30 px-3 py-1.5 rounded-lg overflow-hidden border border-brand-500/5"
-      >
-        {Array.from({ length: 24 }).map((_, idx) => (
-          <div 
-            key={idx}
-            className="flex-1 h-full rounded-t-sm origin-bottom transition-transform duration-75 scale-y-[0.08]"
-            style={{ 
-              backgroundColor: "rgba(128, 170, 160, 0.2)",
-              willChange: "transform, background-color"
-            }}
-          />
-        ))}
+      
+      {/* Stereo channels VU */}
+      <div className="flex flex-col gap-3.5 my-1" dir="ltr">
+        {/* Left Channel */}
+        <div className="flex items-center gap-3">
+          <span className="text-[10px] font-black text-brand-300 w-3">L</span>
+          <div className="flex-1 h-3.5 bg-black/40 rounded relative overflow-hidden border border-brand-500/10 shadow-inner">
+            <div 
+              ref={leftBarRef}
+              className="absolute inset-y-0 left-0 w-full origin-left scale-x-[0.02] rounded-r-sm"
+              style={{
+                background: "linear-gradient(to right, #80AAA0 0%, #80AAA0 70%, #eab308 70%, #eab308 90%, #ef4444 90%, #ef4444 100%)",
+                willChange: "transform"
+              }}
+            />
+            <div 
+              ref={leftPeakRef}
+              className="absolute inset-y-0 left-0 w-0.5 bg-white origin-left shadow-[0_0_8px_rgba(255,255,255,0.8)]"
+              style={{ willChange: "transform" }}
+            />
+          </div>
+          <span ref={leftValRef} className="text-[10px] font-mono text-brand-300 w-16 text-right transition-transform duration-100">
+            -60.0 dB
+          </span>
+        </div>
+
+        {/* Right Channel */}
+        <div className="flex items-center gap-3">
+          <span className="text-[10px] font-black text-brand-300 w-3">R</span>
+          <div className="flex-1 h-3.5 bg-black/40 rounded relative overflow-hidden border border-brand-500/10 shadow-inner">
+            <div 
+              ref={rightBarRef}
+              className="absolute inset-y-0 left-0 w-full origin-left scale-x-[0.02] rounded-r-sm"
+              style={{
+                background: "linear-gradient(to right, #80AAA0 0%, #80AAA0 70%, #eab308 70%, #eab308 90%, #ef4444 90%, #ef4444 100%)",
+                willChange: "transform"
+              }}
+            />
+            <div 
+              ref={rightPeakRef}
+              className="absolute inset-y-0 left-0 w-0.5 bg-white origin-left shadow-[0_0_8px_rgba(255,255,255,0.8)]"
+              style={{ willChange: "transform" }}
+            />
+          </div>
+          <span ref={rightValRef} className="text-[10px] font-mono text-brand-300 w-16 text-right transition-transform duration-100">
+            -60.0 dB
+          </span>
+        </div>
+      </div>
+
+      {/* Scale ticks */}
+      <div className="flex justify-between px-6 text-[8px] font-mono font-black text-brand-300/50 border-t border-brand-500/5 pt-1.5" dir="ltr">
+        <span style={{ transform: "translateX(-2px)" }}>-60</span>
+        <span style={{ transform: "translateX(-50%)" }}>-45</span>
+        <span style={{ transform: "translateX(-50%)" }}>-30</span>
+        <span style={{ transform: "translateX(-50%)" }}>-18</span>
+        <span style={{ transform: "translateX(-50%)" }}>-12</span>
+        <span style={{ transform: "translateX(-50%)" }}>-6</span>
+        <span style={{ transform: "translateX(2px)" }} className="text-red-400/80">0 dB</span>
       </div>
     </div>
   );
@@ -147,12 +277,14 @@ interface DashboardViewProps {
   devices: AudioDevice[];
   globalOutputDevice: string;
   onDeviceChange: (deviceName: string) => void;
+  onRefreshDevices?: () => void;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
   devices,
   globalOutputDevice,
-  onDeviceChange
+  onDeviceChange,
+  onRefreshDevices
 }) => {
   const { t } = useLanguage();
   const [gain, setGain] = useState(70);
@@ -160,6 +292,20 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const [noiseSuppression, setNoiseSuppression] = useState(true);
   const [echoCancellation, setEchoCancellation] = useState(false);
   const [selectedInput, setSelectedInput] = useState("default");
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    if (onRefreshDevices && !isRefreshing) {
+      setIsRefreshing(true);
+      try {
+        await onRefreshDevices();
+      } catch (err) {
+        console.error("Failed to refresh devices:", err);
+      } finally {
+        setTimeout(() => setIsRefreshing(false), 800);
+      }
+    }
+  };
   
   // Audio Input devices filter
   const inputDevices = useMemo(() => {
@@ -191,12 +337,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         
         <div className="flex gap-2">
           <button 
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-500/10 border border-brand-500/20 text-xs text-brand-200 hover:text-brand-100 hover:bg-brand-500/20 transition-all cursor-pointer"
-            onClick={() => {
-              // Refresh action
-            }}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-500/10 border border-brand-500/20 text-xs text-brand-200 hover:text-brand-100 hover:bg-brand-500/20 transition-all cursor-pointer ${
+              isRefreshing ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            disabled={isRefreshing}
+            onClick={handleRefresh}
           >
-            <RefreshCw size={12} className="animate-spin-slow" />
+            <RefreshCw size={12} className={isRefreshing ? "animate-spin" : "animate-spin-slow"} />
             {t('dash_refresh_devices')}
           </button>
         </div>
@@ -235,7 +382,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 <select 
                   value={selectedInput}
                   onChange={(e) => setSelectedInput(e.target.value)}
-                  className="w-full appearance-none bg-black/30 border border-brand-500/20 rounded-xl py-2.5 pl-3 pr-10 text-xs text-brand-100 outline-none cursor-pointer transition-all duration-300 focus:border-[#80AAA0]/50"
+                  className="w-full appearance-none bg-black/30 border border-brand-500/20 rounded-xl py-2.5 pl-10 pr-4 text-xs text-brand-100 outline-none cursor-pointer transition-all duration-300 focus:border-[#80AAA0]/50"
                 >
                   {inputDevices.map((d) => (
                     <option key={d.id} value={d.id}>
@@ -307,7 +454,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 <select 
                   value={globalOutputDevice}
                   onChange={(e) => onDeviceChange(e.target.value)}
-                  className="w-full appearance-none bg-black/30 border border-brand-500/20 rounded-xl py-2.5 pl-3 pr-10 text-xs text-brand-100 outline-none cursor-pointer transition-all duration-300 focus:border-[#80AAA0]/50"
+                  className="w-full appearance-none bg-black/30 border border-brand-500/20 rounded-xl py-2.5 pl-10 pr-4 text-xs text-brand-100 outline-none cursor-pointer transition-all duration-300 focus:border-[#80AAA0]/50"
                 >
                   <option value="default">Default System Device</option>
                   {devices.map((d) => (

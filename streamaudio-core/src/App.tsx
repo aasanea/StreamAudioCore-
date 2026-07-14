@@ -767,6 +767,7 @@ function App() {
                   devices={devices}
                   globalOutputDevice={globalOutputDevice}
                   onDeviceChange={handleUpdateGlobalDevice}
+                  onRefreshDevices={fetchDevices}
                 />
               </div>
             )}
